@@ -1,0 +1,70 @@
+/* =============================================
+   OFICINA DE FIBRAS NATURAIS — Tokens
+   ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap');
+
+:root {
+  /* Cores principais */
+  --verde-escuro:    #3D6B1A;
+  --verde-primario:  #4F7A1F;
+  --verde-banner:    #5C8A28;
+  --verde-botao:     #5A8C2A;
+  --verde-hover:     #497320;
+  --verde-claro:     #EAF2DC;
+  --verde-sidebar:   #6A9E30;
+
+  --marrom-escuro:   #3B2314;
+  --marrom-medio:    #5C3D1E;
+  --marrom-claro:    #8B6340;
+  --marrom-borda:    #C4A882;
+
+  --branco:          #FFFFFF;
+  --fundo:           #FAFAF8;
+  --fundo-card:      #FFFFFF;
+  --cinza-leve:      #F5F5F0;
+  --cinza-borda:     #E0D8CE;
+  --cinza-texto:     #666655;
+  --texto-escuro:    #2A1C0E;
+
+  --amarelo-badge:   #E8A020;
+  --vermelho-off:    #C0392B;
+
+  /* Tipografia */
+  --fonte-titulo:  'Montserrat', sans-serif;
+  --fonte-corpo:   'Open Sans', sans-serif;
+
+  /* Espaçamentos */
+  --gap-xs:  4px;
+  --gap-sm:  8px;
+  --gap-md:  16px;
+  --gap-lg:  24px;
+  --gap-xl:  32px;
+  --gap-2xl: 48px;
+  --gap-3xl: 64px;
+
+  /* Layout */
+  --max-width:    1280px;
+  --header-h:     60px;
+  --sidebar-w:    260px;
+  --raio-sm:      4px;
+  --raio-md:      8px;
+  --raio-lg:      12px;
+  --raio-full:    9999px;
+
+  /* Sombras */
+  --shadow-card:  0 2px 8px rgba(0,0,0,0.10);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.14);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,0.18);
+
+  /* Transições */
+  --t-rapida:  150ms ease;
+  --t-normal:  280ms ease;
+  --t-lenta:   480ms cubic-bezier(.4,0,.2,1);
+
+  /* Z-index */
+  --z-header:  200;
+  --z-sidebar: 300;
+  --z-overlay: 290;
+  --z-modal:   400;
+  --z-toast:   500;
+}

@@ -1,0 +1,37 @@
+/* =============================================
+   OFICINA DE FIBRAS NATURAIS — Reset
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--fonte-corpo);
+  background: var(--fundo);
+  color: var(--texto-escuro);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body.sem-scroll { overflow: hidden; }
+
+img, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; font-size: inherit; }
+ul, ol { list-style: none; }
+
+::selection { background: var(--verde-claro); color: var(--verde-escuro); }
+
+:focus-visible {
+  outline: 2px solid var(--verde-botao);
+  outline-offset: 2px;
+  border-radius: var(--raio-sm);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cinza-leve); }
+::-webkit-scrollbar-thumb { background: var(--marrom-borda); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--marrom-medio); }

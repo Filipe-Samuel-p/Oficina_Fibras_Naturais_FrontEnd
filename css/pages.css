@@ -1,0 +1,105 @@
+/* =============================================
+   HOME
+   ============================================= */
+.home-secao {
+  padding: var(--gap-xl) 0;
+}
+.home-secao + .home-secao {
+  padding-top: 0;
+}
+
+/* Carrossel home: 4 cards visíveis */
+.home-carrossel .carrossel__trilho {
+  /* largura controlada via JS */
+}
+
+/* =============================================
+   LOJA
+   ============================================= */
+.loja-secao {
+  padding: var(--gap-xl) 0 var(--gap-2xl);
+}
+
+.loja-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-md);
+}
+
+@media (max-width: 1024px) { .loja-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .loja-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 360px)  { .loja-grid { grid-template-columns: 1fr; } }
+
+/* =============================================
+   FAQ
+   ============================================= */
+.faq-secao {
+  padding: var(--gap-3xl) 0;
+}
+
+.faq-secao__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--gap-2xl);
+  color: var(--texto-escuro);
+}
+
+.faq-lista {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* =============================================
+   SUPORTE (CONTATO)
+   ============================================= */
+.suporte-secao {
+  padding: var(--gap-3xl) 0;
+}
+
+.suporte-secao__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--gap-2xl);
+  color: var(--texto-escuro);
+}
+
+.suporte-form {
+  max-width: 600px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/* =============================================
+   CARRINHO
+   ============================================= */
+.carrinho-secao {
+  padding: var(--gap-xl) 0 var(--gap-3xl);
+}
+
+.carrinho-secao__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--gap-xl);
+  color: var(--texto-escuro);
+}
+
+.carrinho-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--gap-xl);
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .carrinho-layout {
+    grid-template-columns: 1fr;
+  }
+}

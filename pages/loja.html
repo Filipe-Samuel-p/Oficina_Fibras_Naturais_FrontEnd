@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Loja — Oficina de Fibras Naturais" />
+  <title>Loja | Oficina de Fibras Naturais</title>
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages.css" />
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar" aria-label="Menu lateral">
+  <div class="sidebar__header">
+    <span class="sidebar__header-logo">Oficina de Fibras Naturais</span>
+    <button class="sidebar__fechar" id="sidebar-fechar" aria-label="Fechar menu">✕</button>
+  </div>
+  <nav class="sidebar__nav">
+    <p class="sidebar__secao-label">Geral</p>
+    <a href="../index.html" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Página Inicial
+    </a>
+    <a href="loja.html" class="sidebar__link ativo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Loja
+    </a>
+    <a href="#" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Portfolio
+    </a>
+    <a href="#" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+      Blog
+    </a>
+    <p class="sidebar__secao-label">Admin</p>
+    <a href="#" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M14 20h7M17 14v7"/></svg>
+      Painel do Administrador
+    </a>
+    <p class="sidebar__secao-label">Ajuda</p>
+    <a href="suporte.html" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      Suporte
+    </a>
+    <a href="faq.html" class="sidebar__link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      FAQ
+    </a>
+  </nav>
+  <div class="sidebar__sair">
+    <button class="sidebar__sair-btn">SAIR</button>
+  </div>
+</aside>
+
+<header class="header">
+  <div class="container">
+    <div class="header__inner">
+      <button class="header__menu-btn" id="menu-btn" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="../index.html" class="header__logo">Oficina de Fibras Naturais</a>
+      <div class="header__busca">
+        <input type="text" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
+        <button aria-label="Pesquisar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__acoes">
+        <div class="header__usuario"><span>Entre ou</span><span>Cadastre-se</span></div>
+        <a href="carrinho.html" class="header__carrinho-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.52L23 6H6"/></svg>
+          Carrinho
+          <span class="header__carrinho-badge" id="carrinho-badge">0</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="loja-secao">
+    <div class="container">
+      <div class="loja-grid" id="loja-grid">
+        <!-- Produtos gerados via JS -->
+      </div>
+
+      <!-- Paginação -->
+      <nav class="paginacao" id="paginacao" aria-label="Paginação da loja">
+        <button class="paginacao__btn paginacao__btn--seta" id="pag-prev" aria-label="Página anterior">&#8249;</button>
+        <!-- Páginas geradas via JS -->
+        <button class="paginacao__btn paginacao__btn--seta" id="pag-next" aria-label="Próxima página">&#8250;</button>
+      </nav>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="footer__social">
+    <a href="#" class="footer__social-btn" aria-label="Instagram">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+    </a>
+    <a href="#" class="footer__social-btn" aria-label="E-mail">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    </a>
+  </div>
+  <nav class="footer__links" aria-label="Links do rodapé">
+    <a href="../index.html" class="footer__link">Página Inicial</a>
+    <a href="#" class="footer__link">Sobre</a>
+    <a href="suporte.html" class="footer__link">Contate-nos</a>
+    <a href="#" class="footer__link">Nosso Time</a>
+  </nav>
+  <p class="footer__copy">©2025 por Oficina de fibras naturais.</p>
+</footer>
+
+<script type="module" src="../js/main.js"></script>
+<script type="module" src="../js/loja.js"></script>
+</body>
+</html>
