@@ -2,7 +2,7 @@
    HOME
    ============================================= */
 .home-secao {
-  padding: var(--gap-xl) 0;
+  padding: var(--gap-3xl) 0;
 }
 .home-secao + .home-secao {
   padding-top: 0;
@@ -56,24 +56,97 @@
    ============================================= */
 .suporte-secao {
   padding: var(--gap-3xl) 0;
+  background: var(--branco);
 }
 
-.suporte-secao__titulo {
-  font-family: var(--fonte-titulo);
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: var(--gap-2xl);
-  color: var(--texto-escuro);
+.suporte-grid {
+  display: flex;
+  gap: var(--gap-3xl);
+  align-items: flex-start;
 }
 
-.suporte-form {
-  max-width: 600px;
-  margin-inline: auto;
+/* Lado esquerdo: Info */
+.suporte-info {
+  flex: 1;
+}
+
+.suporte-info .suporte-secao__titulo {
+  text-align: left;
+  margin-bottom: var(--gap-md);
+}
+
+.suporte-secao__titulo span {
+  color: var(--amarelo-badge);
+}
+
+.suporte-info__texto {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--cinza-texto);
+  margin-bottom: var(--gap-xl);
+}
+
+.suporte-contatos {
   display: flex;
   flex-direction: column;
   gap: var(--gap-lg);
 }
+
+.suporte-contato-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.suporte-contato-icone {
+  width: 44px;
+  height: 44px;
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+  border-radius: var(--raio-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.suporte-contato-item strong {
+  display: block;
+  font-family: var(--fonte-titulo);
+  font-size: 14px;
+  color: var(--texto-escuro);
+  margin-bottom: 2px;
+}
+
+.suporte-contato-item p {
+  font-size: 14px;
+  color: var(--cinza-texto);
+}
+
+/* Lado direito: Form */
+.suporte-form {
+  flex: 1;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  background: var(--fundo);
+  padding: var(--gap-xl);
+  border-radius: var(--raio-lg);
+  border: 1px solid var(--cinza-borda);
+}
+
+@media (max-width: 992px) {
+  .suporte-grid {
+    flex-direction: column;
+    gap: var(--gap-2xl);
+  }
+  .suporte-info, .suporte-form {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 
 /* =============================================
    CARRINHO
@@ -102,4 +175,19 @@
   .carrinho-layout {
     grid-template-columns: 1fr;
   }
+}
+
+/* =============================================
+   MAPA HOME
+   ============================================= */
+.home-mapa {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+}
+
+.home-mapa .secao-titulo {
+  text-align: center;
+  margin-bottom: var(--gap-xl);
 }

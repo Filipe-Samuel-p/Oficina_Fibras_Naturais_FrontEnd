@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Oficina de Fibras Naturais — Loja de produtos artesanais em fibras naturais." />
@@ -37,14 +37,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       Loja
     </a>
-    <a href="#" class="sidebar__link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Portfolio
-    </a>
-    <a href="#" class="sidebar__link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
-      Blog
-    </a>
     <p class="sidebar__secao-label">Admin</p>
     <a href="#" class="sidebar__link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 17h7M14 20h7M17 14v7"/></svg>
@@ -54,10 +46,6 @@
     <a href="pages/suporte.html" class="sidebar__link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
       Suporte
-    </a>
-    <a href="pages/faq.html" class="sidebar__link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      FAQ
     </a>
   </nav>
   <div class="sidebar__sair">
@@ -73,12 +61,6 @@
         <span></span><span></span><span></span>
       </button>
       <a href="index.html" class="header__logo">Oficina de Fibras Naturais</a>
-      <div class="header__busca">
-        <input type="text" placeholder="Buscar produtos..." aria-label="Buscar produtos" />
-        <button aria-label="Pesquisar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        </button>
-      </div>
       <div class="header__acoes">
         <div class="header__usuario">
           <span>Entre ou</span>
@@ -104,6 +86,7 @@
         <span class="hero-banner__label">OFICINA</span>
         <h1 class="hero-banner__titulo">FIBRAS NATURAIS</h1>
       </div>
+      <!--
       <div class="hero-banner__dots" aria-label="Indicadores do banner">
         <button class="hero-banner__dot ativo" aria-label="Slide 1"></button>
         <button class="hero-banner__dot" aria-label="Slide 2"></button>
@@ -112,13 +95,14 @@
         <button class="hero-banner__dot" aria-label="Slide 5"></button>
       </div>
     </div>
+    -->
   </section>
 
   <!-- PRODUTOS EM DESTAQUE -->
   <section class="home-secao" aria-labelledby="destaque-titulo">
-    <div class="container">
+    <div class="container" id="produtos">
       <h2 class="secao-titulo" id="destaque-titulo">
-        Produtos em <span>Destaque</span>
+        Produtos
       </h2>
 
       <div class="carrossel" id="carrossel-destaque">
@@ -133,52 +117,143 @@
     </div>
   </section>
 
-  <!-- PRODUTOS RECENTES -->
-  <section class="home-secao" aria-labelledby="recentes-titulo">
+  <!-- SOBRE NÓS -->
+  <section class="sobre-nos" id="sobre-nos" aria-labelledby="sobre-nos-titulo">
     <div class="container">
-      <h2 class="secao-titulo" id="recentes-titulo">
-        Produtos <span>Recentes</span>
-      </h2>
-
-      <div class="carrossel" id="carrossel-recentes">
-        <button class="carrossel__btn carrossel__btn--prev" aria-label="Anterior">&#8249;</button>
-        <div class="carrossel__trilho-wrap">
-          <div class="carrossel__trilho" id="trilho-recentes">
-            <!-- Cards gerados via JS -->
-          </div>
-        </div>
-        <button class="carrossel__btn carrossel__btn--next" aria-label="Próximo">&#8250;</button>
+      <div class="sobre-nos__inner">
+        <h2 class="sobre-nos__titulo" id="sobre-nos-titulo">Sobre a Oficina de Fibras</h2>
+        <p class="sobre-nos__texto">
+          A Oficina de Fibras Naturais nasceu da paixão pelo artesanato autêntico e sustentável.
+          Trabalhamos com matérias-primas colhidas de forma responsável, transformando fibras como vime,
+          palha e junco em peças únicas que levam o toque da natureza para dentro da sua casa.
+        </p>
+        <p class="sobre-nos__texto">
+          Nossa missão é valorizar o trabalho manual e as tradições ancestrais, unindo o design contemporâneo
+          com a durabilidade e a beleza orgânica das fibras naturais. Cada produto em nossa loja conta uma
+          história de dedicação e respeito ao meio ambiente.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- MAPA -->
-  <section class="mapa-secao" aria-label="Nossa localização">
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.123456789!2d-41.3297!3d-21.7618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDQ1JzQyLjUiUyA0McKwMTknNDYuOSJX!5e0!3m2!1spt!2sbr!4v1234567890"
-      loading="lazy"
-      title="Localização da Oficina de Fibras Naturais"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
-  </section>
+  <!-- ENTRE EM CONTATO -->
+        <section class="suporte-secao">
+        <div class="container">
+          <div class="suporte-grid">
 
-</main>
+            <!-- LADO ESQUERDO: INFO -->
+            <div class="suporte-info">
+              <h2 class="suporte-secao__titulo">Entre em contato <span>conosco!</span></h2>
+              <p class="suporte-info__texto">
+                Tem alguma dúvida sobre nossos produtos artesanais ou quer fazer um pedido sob medida?
+                Estamos aqui para ajudar você a escolher a peça perfeita para o seu ambiente.
+              </p>
 
+              <div class="suporte-contatos">
+                <div class="suporte-contato-item">
+                  <div class="suporte-contato-icone">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .98h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                  </div>
+                  <div>
+                    <strong>Telefone</strong>
+                    <p>(22) 99999-9999</p>
+                  </div>
+                </div>
+
+                <div class="suporte-contato-item">
+                  <div class="suporte-contato-icone">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div>
+                    <strong>E-mail</strong>
+                    <p>contato@oficinadefibras.com.br</p>
+                  </div>
+                </div>
+
+                <div class="suporte-contato-item">
+                  <div class="suporte-contato-icone">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <div>
+                    <strong>Localização</strong>
+                    <p>Campos dos Goytacazes, RJ</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LADO DIREITO: FORM -->
+            <form class="suporte-form" id="suporte-form" novalidate>
+              <div class="form-grupo">
+                <label class="form-label" for="nome">Nome<span class="obrigatorio">*</span></label>
+                <div class="form-input-wrap">
+                  <span class="form-icone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  </span>
+                  <input class="form-input" type="text" id="nome" name="nome" placeholder="Fulano da Silva" required />
+                </div>
+              </div>
+
+              <div class="form-grupo">
+                <label class="form-label" for="email">E-mail<span class="obrigatorio">*</span></label>
+                <div class="form-input-wrap">
+                  <span class="form-icone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </span>
+                  <input class="form-input" type="email" id="email" name="email" placeholder="fulano@gmail.com" required />
+                </div>
+              </div>
+
+              <div class="form-grupo">
+                <label class="form-label" for="telefone">Telefone<span class="obrigatorio">*</span></label>
+                <div class="form-input-wrap">
+                  <span class="form-icone">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .98h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                  </span>
+                              <input class="form-input" type="tel" id="telefone" name="telefone" placeholder="+00 (00) 0000-0000" required />
+                              </div>
+                            </div>
+
+                            <div class="form-grupo">
+                              <label class="form-label" for="mensagem">Mensagem</label>                <textarea class="form-textarea" id="mensagem" name="mensagem" placeholder="Como podemos ajudar?" rows="5"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primario" style="width:100%; padding: 12px;">
+                Enviar Mensagem
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </section>
+          <!-- MAPA-->
+          <section class="home-mapa">
+            <h2 class="secao-titulo">Onde nos <span>encontrar</span></h2>
+            </div>
+            <div class="embed-map-responsive">
+              <div class="embed-map-container">
+                <iframe class="embed-map-frame" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=800&height=400&hl=en&q=Universidade%20Estadual%20do%20Norte%20Fluminense&t=&z=9&ie=UTF8&iwloc=B&output=embed">
+                </iframe>
+                <a href="https://funclicker.org" style="font-size:2px!important;color:gray!important;position:absolute;bottom:0;left:0;z-index:1;max-height:1px;overflow:hidden">Fun Clicker</a>
+              </div>
+
+
+
+          </section>
+
+        </main>
 <!-- FOOTER -->
 <footer class="footer" role="contentinfo">
   <div class="footer__social">
     <a href="#" class="footer__social-btn" aria-label="Instagram">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
     </a>
-    <a href="#" class="footer__social-btn" aria-label="E-mail">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-    </a>
   </div>
   <nav class="footer__links" aria-label="Links do rodapé">
-    <a href="index.html" class="footer__link">Página Inicial</a>
-    <a href="#" class="footer__link">Sobre</a>
-    <a href="pages/suporte.html" class="footer__link">Contate-nos</a>
+    <a href="index.html#produtos" class="footer__link">Página Inicial</a>
+    <a href="#sobre-nos" class="footer__link">Sobre</a>
     <a href="#" class="footer__link">Nosso Time</a>
+    <a href="pages/faq.html" class="footer__link">FAQ</a>
   </nav>
   <p class="footer__copy">©2025 por Oficina de fibras naturais.</p>
 </footer>
