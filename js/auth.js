@@ -5,6 +5,24 @@
 
 const BASE_URL = 'http://localhost:8080/api/v1';
 
+/**
+ * Decodifica o payload de um JWT sem dependências externas.
+ */
+function jwtDecode(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Erro ao decodificar JWT:", error);
+    return null;
+  }
+}
+
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -420,10 +438,10 @@ async function handleLogin(form) {
     }
 
     const data = await response.json();
-    document.writeln(data)
+    console.log(jwtDecode(data.accessToken))
     const userNameToStore = data.name && typeof data.name === 'string' ? data.name : 'Usuário';
 
-    localStorage.setItem('token', data.token); // Store the token
+    localStorage.setItem('token', data.accessToken); // Store the token
     localStorage.setItem('userName', userNameToStore); // Store user name or placeholder
 
     mostrarToast('Login realizado com sucesso! ✓');
@@ -597,4 +615,3 @@ function handleLogout() {
 
 // Expõe para uso externo se necessário (e.g., para o botão no index.html)
 window.handleLogout = handleLogout;
-
