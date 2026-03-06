@@ -73,9 +73,11 @@ function checkLoginStatus() {
   const token = getCookie('token');
   if (userName && token) {
     atualizarHeaderUsuario(userName);
+    atualizarSidebar(true);
   } else {
     eraseCookie('userName');
     eraseCookie('token');
+    atualizarSidebar(false);
   }
 }
 
@@ -463,14 +465,13 @@ async function handleLogin(form) {
 
     const data = await response.json();
     const decoded = jwtDecode(data.accessToken);
-    const userNameToStore = data.name && typeof data.name === 'string' ? data.name : 'Usuário';
+    const userNameToStore = decoded.username && typeof decoded.username === 'string' ? decoded.username : 'Usuário';
 
     // Calcula a expiração em dias com base no 'exp' do JWT
     let diasParaExpirar = 7; // fallback
     if (decoded && decoded.exp) {
       const agora = Math.floor(Date.now() / 1000);
       const segundosRestantes = decoded.exp - agora;
-      console.log(segundosRestantes)
       diasParaExpirar = segundosRestantes / (60 * 60 * 24);
     }
 
@@ -479,6 +480,7 @@ async function handleLogin(form) {
 
     mostrarToast('Login realizado com sucesso! ✓');
     atualizarHeaderUsuario(userNameToStore); // Use the processed name
+    atualizarSidebar(true);
     setTimeout(fecharModal, 1400);
 
   } catch (error) {
@@ -643,7 +645,24 @@ function handleLogout() {
   eraseCookie('token');
   eraseCookie('userName');
   atualizarHeaderUsuario(null); // Update header to logged out state
+  atualizarSidebar(false);
   window.location.reload(); // Reload the page to clear all session-dependent data and UI
+}
+
+function atualizarSidebar(logado) {
+  const secaoMinhaConta = document.getElementById('sidebar-minha-conta');
+  const linkPerfil = document.getElementById('sidebar-perfil');
+  const btnSair = document.querySelector('.sidebar__sair');
+
+  if (logado) {
+    if (secaoMinhaConta) secaoMinhaConta.style.display = 'block';
+    if (linkPerfil) linkPerfil.style.display = 'flex';
+    if (btnSair) btnSair.style.display = 'block';
+  } else {
+    if (secaoMinhaConta) secaoMinhaConta.style.display = 'none';
+    if (linkPerfil) linkPerfil.style.display = 'none';
+    if (btnSair) btnSair.style.display = 'none';
+  }
 }
 
 // Expõe para uso externo se necessário (e.g., para o botão no index.html)
