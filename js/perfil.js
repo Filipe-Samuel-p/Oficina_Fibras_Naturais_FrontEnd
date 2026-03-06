@@ -110,6 +110,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.target.value = v;
   });
 
+  // Máscara de Telefone (Perfil)
+  document.getElementById("edit-telefone").addEventListener("input", (e) => {
+    let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+    if (v.length > 10) {
+      v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else if (v.length > 6) {
+      v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    } else if (v.length > 2) {
+      v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+    } else if (v.length > 0) {
+      v = v.replace(/^(\d{0,2})/, "($1");
+    }
+    e.target.value = v;
+  });
+
   // Lógica de envio do formulário de Perfil
   formUpdatePerfil.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -119,12 +134,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const updatedInfo = {
       name: editNome.value,
-      phone: editTelefone.value.replace(/\D/g, ""),
+      phone: editTelefone.value, // Enviando o valor formatado como solicitado
     };
+
 
     try {
       const res = await fetch(`${BASE_URL}/user`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -281,13 +297,13 @@ const carregarPerfil = async () => {
       userData = info;
       displayNome.textContent = info.name || "Não informado";
       displayEmail.textContent = info.email || "Não informado";
-      displayTelefone.textContent = formatPhone(info.phone) || "Não informado";
+      displayTelefone.textContent = info.phone || "Não informado";
       displayInicialPerfil.textContent = info.name.slice(0,1).toUpperCase() || "X"
 
       // Exibição do Endereço
       if (info.address) {
         displayBairroCidade.textContent = `${info.address.neighborhood}, ${info.address.city}`;
-        displayReferencia.textContent = `Referência: ${info.address.reference}`;
+        displayReferencia.textContent = info.address.reference;
         displayRuaNumero.textContent = `${info.address.street}, ${info.address.number}`;
         displayCEP.textContent = `CEP: ${info.address.zipCode}`;
       } else {
