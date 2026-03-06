@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Meu Perfil — Oficina de Fibras Naturais"
+    />
+    <title>Meu Perfil | Oficina de Fibras Naturais</title>
+
+    <!-- CSS padrão do projeto -->
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages.css" />
+    <link rel="stylesheet" href="../css/modal.css" />
+
+    <!-- JS padrão do projeto -->
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/main.js"></script>
+  </head>
+  <body>
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar" aria-label="Menu lateral">
+      <div class="sidebar__header">
+        <span class="sidebar__header-logo">Oficina de Fibras Naturais</span>
+        <button
+          class="sidebar__fechar"
+          id="sidebar-fechar"
+          aria-label="Fechar menu"
+        >
+          ✕
+        </button>
+      </div>
+
+      <nav class="sidebar__nav">
+        <p class="sidebar__secao-label">Geral</p>
+
+        <a href="../index.html" class="sidebar__link">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
+            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
+            <path d="M9 21V12h6v9" />
+          </svg>
+          Página Inicial
+        </a>
+
+        <a href="../pages/loja.html" class="sidebar__link">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 01-8 0" />
+          </svg>
+          Loja
+        </a>
+
+        <p class="sidebar__secao-label">Minha Conta</p>
+
+        <a href="../pages/perfil.html" class="sidebar__link ativo">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Meu Perfil
+        </a>
+
+        <a href="../pages/carrinho.html" class="sidebar__link">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path
+              d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.52L23 6H6"
+            />
+          </svg>
+          Meu Carrinho
+        </a>
+
+        <p class="sidebar__secao-label">Ajuda</p>
+
+        <a href="../pages/faq.html" class="sidebar__link">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            width="18"
+            height="18"
+          >
+            <path
+              d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
+            />
+          </svg>
+          FAQ
+        </a>
+      </nav>
+
+      <div class="sidebar__sair">
+        <button class="sidebar__sair-btn">SAIR</button>
+      </div>
+    </aside>
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="container">
+        <div class="header__inner">
+          <button
+            class="header__menu-btn"
+            id="menu-btn"
+            aria-label="Abrir menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <a href="../index.html" class="header__logo"
+            >Oficina de Fibras Naturais</a
+          >
+
+          <div class="header__acoes">
+            <div class="header__usuario">
+              <span>Olá, <strong>Usuário</strong></span>
+            </div>
+            <a
+              href="../pages/carrinho.html"
+              class="header__carrinho-btn"
+              aria-label="Ver carrinho"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.52L23 6H6"
+                />
+              </svg>
+              Carrinho
+              <span class="header__carrinho-badge" id="carrinho-badge">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="perfil-secao">
+        <div class="container perfil-container">
+          <!-- Cabeçalho do Perfil -->
+          <div class="perfil-header">
+            <div class="perfil-avatar" id="inicial-perfil">U</div>
+            <div class="perfil-info-basica">
+              <h1>Meu Perfil</h1>
+              <p>Gerencie suas informações e acompanhe seus pedidos.</p>
+            </div>
+          </div>
+
+          <div class="perfil-grid">
+            <!-- Coluna Esquerda: Dados Pessoais -->
+            <div class="perfil-col-esquerda">
+              <div class="perfil-card">
+                <h2 class="perfil-card__titulo">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  Dados Pessoais
+                </h2>
+
+                <div class="perfil-info">
+                  <div class="perfil-item-lista">
+                    <span class="perfil-item-titulo">Nome Completo</span>
+                    <p class="perfil-item-valor" id="display-nome">Carregando...</p>
+                  </div>
+                  <div class="perfil-item-lista">
+                    <span class="perfil-item-titulo">E-mail</span>
+                    <p class="perfil-item-valor" id="display-email">Carregando...</p>
+                  </div>
+                  <div class="perfil-item-lista">
+                    <span class="perfil-item-titulo">Telefone</span>
+                    <p class="perfil-item-valor" id="display-telefone">Carregando...</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="btn-abrir-modal"
+                    class="btn btn-primario"
+                    style="width: 100%; margin-top: var(--gap-md)"
+                  >
+                    Atualizar Dados
+                  </button>
+                </div>
+              </div>
+
+              <div class="perfil-card">
+                <h2 class="perfil-card__titulo">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Endereço de Entrega
+                </h2>
+                <div class="perfil-item-lista" id="display-endereco-container">
+                  <span class="perfil-item-titulo" id="display-bairro-cidade">Carregando...</span>
+                  <p class="perfil-item-valor" id="display-rua-numero"></p>
+                  <p class="perfil-item-valor" id="display-cep"></p>
+                  <span class="perfil-item-valor" id="display-referencia-endereco"></span>
+                </div>
+                <button
+                  type="button"
+                  id="btn-abrir-modal-endereco"
+                  class="btn btn-secundario"
+                  style="width: 100%; margin-top: var(--gap-md); padding: 8px"
+                >
+                  Alterar Endereço
+                </button>
+              </div>
+            </div>
+
+            <!-- Coluna Direita: Pedidos Recentes -->
+            <div class="perfil-col-direita">
+              <div class="perfil-card">
+                <h2 class="perfil-card__titulo">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <path d="M16 10a4 4 0 01-8 0" />
+                  </svg>
+                  Últimos Pedidos
+                </h2>
+
+                <div id="lista-pedidos">
+                  <p class="perfil-item-valor">Buscando seus pedidos...</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer__social">
+        <a href="#" class="footer__social-btn" aria-label="Instagram">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+          </svg>
+        </a>
+      </div>
+      <nav class="footer__links">
+        <a href="../index.html" class="footer__link">Página Inicial</a>
+        <a href="../index.html#sobre-nos" class="footer__link">Sobre</a>
+        <a href="../pages/faq.html" class="footer__link">FAQ</a>
+      </nav>
+      <p class="footer__copy">©2025 por Oficina de fibras naturais.</p>
+    </footer>
+
+    <!-- MODAL DE ATUALIZAÇÃO -->
+    <div class="modal-backdrop" id="modal-perfil">
+      <div class="modal" style="max-width: 450px;">
+        <button class="modal__fechar" id="modal-perfil-fechar" aria-label="Fechar modal">✕</button>
+        <div class="auth-modal__corpo">
+          <h2 class="auth-painel__titulo">Atualizar Perfil</h2>
+          <p class="auth-painel__sub">Altere seus dados de contato abaixo.</p>
+
+          <form class="auth-form" id="form-update-perfil">
+            <div class="form-grupo">
+              <label class="form-label" for="edit-nome">Nome Completo</label>
+              <input class="form-input" type="text" id="edit-nome" required />
+            </div>
+            <div class="form-grupo">
+              <label class="form-label" for="edit-telefone">Telefone</label>
+              <input class="form-input" type="tel" id="edit-telefone" required />
+            </div>
+            <button type="submit" class="auth-btn-submit" id="btn-salvar-perfil">Salvar Alterações</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE ENDEREÇO -->
+    <div class="modal-backdrop" id="modal-endereco">
+      <div class="modal" style="max-width: 500px;">
+        <button class="modal__fechar" id="modal-endereco-fechar" aria-label="Fechar modal">✕</button>
+        <div class="auth-modal__corpo">
+          <h2 class="auth-painel__titulo">Meu Endereço</h2>
+          <p class="auth-painel__sub">Informe onde deseja receber seus produtos.</p>
+
+          <form class="auth-form" id="form-endereco">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+              <div class="form-grupo">
+                <label class="form-label" for="end-zipcode">CEP</label>
+                <input class="form-input" type="text" id="end-zipcode" placeholder="00000-000" required maxlength="9" />
+              </div>
+              <div class="form-grupo">
+                <label class="form-label" for="end-number">Número</label>
+                <input class="form-input" type="text" id="end-number" placeholder="123" required />
+              </div>
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="end-street">Rua/Logradouro</label>
+              <input class="form-input" type="text" id="end-street" placeholder="Nome da rua" required />
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-grupo">
+                <label class="form-label" for="end-neighborhood">Bairro</label>
+                <input class="form-input" type="text" id="end-neighborhood" placeholder="Bairro" required />
+              </div>
+              <div class="form-grupo">
+                <label class="form-label" for="end-city">Cidade</label>
+                <input class="form-input" type="text" id="end-city" placeholder="Cidade" required />
+              </div>
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="end-reference">Referência (Opcional)</label>
+              <input class="form-input" type="text" id="end-reference" placeholder="Ex: Próximo à padaria" />
+            </div>
+
+            <button type="submit" class="auth-btn-submit" id="btn-salvar-endereco">Salvar Endereço</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="../js/perfil.js"></script>
+  </body>
+</html>

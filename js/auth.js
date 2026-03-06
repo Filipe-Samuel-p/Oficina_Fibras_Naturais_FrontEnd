@@ -6,6 +6,34 @@
 const BASE_URL = 'http://localhost:8080/api/v1';
 
 /**
+ * Utilitários de Cookies
+ */
+function setCookie(name, value, days = 7) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+function eraseCookie(name) {
+  document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
+}
+
+/**
  * Decodifica o payload de um JWT sem dependências externas.
  */
 function jwtDecode(token) {
@@ -41,14 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Verifica status de login ao carregar a página
 function checkLoginStatus() {
-  const userName = localStorage.getItem('userName');
-  const token = localStorage.getItem('token');
+  const userName = getCookie('userName');
+  const token = getCookie('token');
   if (userName && token) {
     atualizarHeaderUsuario(userName);
   } else {
-    // Optionally clear any stale login data if only one is present
-    localStorage.removeItem('userName');
-    localStorage.removeItem('token');
+    eraseCookie('userName');
+    eraseCookie('token');
   }
 }
 
@@ -234,19 +261,16 @@ function injetarHTMLModal() {
 
 function vincularHeaderBtn() {
   const handleHeaderButtonClick = () => {
-    const token = localStorage.getItem('token');
+    const token = getCookie('token');
     if (!token) { // Only open modal if not logged in
       abrirModal('login');
     } else {
-        // Optionally, add logic here for logged-in users, e.g., show a profile menu
         console.log('User is logged in, not opening login modal.');
-        // For demonstration, let's add a simple alert
-        // alert(`Olá, ${localStorage.getItem('userName')}! Você já está logado.`);
     }
   };
 
   const handleHeaderButtonKeydown = (e) => {
-    const token = localStorage.getItem('token');
+    const token = getCookie('token');
     if (!token && (e.key === 'Enter' || e.key === ' ')) { // Only open modal if not logged in
       abrirModal('login');
     }
@@ -438,11 +462,20 @@ async function handleLogin(form) {
     }
 
     const data = await response.json();
-    console.log(jwtDecode(data.accessToken))
+    const decoded = jwtDecode(data.accessToken);
     const userNameToStore = data.name && typeof data.name === 'string' ? data.name : 'Usuário';
 
-    localStorage.setItem('token', data.accessToken); // Store the token
-    localStorage.setItem('userName', userNameToStore); // Store user name or placeholder
+    // Calcula a expiração em dias com base no 'exp' do JWT
+    let diasParaExpirar = 7; // fallback
+    if (decoded && decoded.exp) {
+      const agora = Math.floor(Date.now() / 1000);
+      const segundosRestantes = decoded.exp - agora;
+      console.log(segundosRestantes)
+      diasParaExpirar = segundosRestantes / (60 * 60 * 24);
+    }
+
+    setCookie('token', data.accessToken, diasParaExpirar);
+    setCookie('userName', userNameToStore, diasParaExpirar);
 
     mostrarToast('Login realizado com sucesso! ✓');
     atualizarHeaderUsuario(userNameToStore); // Use the processed name
@@ -607,8 +640,8 @@ window.abrirModalAuth = abrirModal;
 
 // Logout
 function handleLogout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userName');
+  eraseCookie('token');
+  eraseCookie('userName');
   atualizarHeaderUsuario(null); // Update header to logged out state
   window.location.reload(); // Reload the page to clear all session-dependent data and UI
 }
