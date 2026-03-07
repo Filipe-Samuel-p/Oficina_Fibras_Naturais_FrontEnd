@@ -5,15 +5,37 @@
 
 import { Cart, formatarBRL } from './cart.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+const BASE_URL = 'http://localhost:8080/api/v1';
+const modalBackdrop = document.getElementById("modal-endereco")
+const modalFechar = document.getElementById("modal-endereco-fechar")
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   renderizarCarrinho();
+  const userAddress = await getAddress();
+  console.log(userAddress)
 
   window.addEventListener('carrinho:atualizado', renderizarCarrinho);
 
   // WhatsApp
-  document.getElementById('btn-whatsapp')?.addEventListener('click', abrirWhatsApp);
+  if (userAddress) {
+    document.getElementById('btn-finalizar-pedido')?.addEventListener('click', finalizarPedido);
+  } else {
+    document.getElementById('btn-finalizar-pedido')?.addEventListener('click', () => {
+      modalBackdrop.classList.add("visivel");
+    });
+  }
 });
-
 // ============================
 // Renderização
 // ============================
@@ -99,16 +121,78 @@ function renderizarCarrinho() {
 // ============================
 // WhatsApp
 // ============================
-function abrirWhatsApp() {
+async function finalizarPedido() {
   const itens = Cart.getItens();
+  const itensPayload = []
+  const endereco = await getAddress()
+
   if (!itens.length) return;
+  itens.forEach(item => {
+    itensPayload.push({ productId: item.id, quantity: item.quantidade })
+  })
 
-  const linhas = itens.map(i => `• ${i.nome} (${i.quantidade}x) – ${formatarBRL(i.preco * i.quantidade)}`);
-  const total  = formatarBRL(Cart.getTotalValor());
-  const texto  = `Olá! Gostaria de fazer um pedido:\n\n${linhas.join('\n')}\n\n*Total: ${total}*`;
+  const requestBody = {
+    items: itensPayload,
+    addressId: endereco.id
+  }
 
-  // Substitua pelo número real: 5522999999999
-  const numero = '5522999999999';
-  const url    = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
-  window.open(url, '_blank');
+
+
+  try {
+    const res = await fetch(`${BASE_URL}/orders`,
+      {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getCookie('token')}`
+        },
+        body: JSON.stringify(requestBody)
+      })
+    if (!res.ok) {
+      throw new Error("Erro ao efetuar o pedido!")
+    }
+
+    const data = await res.json()
+    Cart.limpar()
+    window.open(data.whatsappLink, '_blank');
+
+  } catch (error) {
+    console.error(error)
+  }
+}
+  // const linhas = itens.map(i => `• ${i.nome} (${i.quantidade}x) – ${formatarBRL(i.preco * i.quantidade)}`);
+  // const total  = formatarBRL(Cart.getTotalValor());
+  // const texto  = `Olá! Gostaria de fazer um pedido:\n\n${linhas.join('\n')}\n\n*Total: ${total}*`;
+
+  // // Substitua pelo número real: 5522999999999
+  // const numero = '5522999999999';
+  // const url    = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+  // window.open(url, '_blank');
+
+
+modalFechar.addEventListener("click", () =>
+    modalBackdrop.classList.remove("visivel"),
+  );
+
+async function getAddress() {
+  try {
+    const res = await fetch(`${BASE_URL}/user`,
+      {
+        headers: {
+          'Authorization': `Bearer ${getCookie('token')}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+    if (res.ok) {
+      const data = await res.json()
+      if (data.address) {
+        return data.address
+      }
+      return null
+    }
+
+  } catch (error) {
+    console.error(error)
+  }
 }

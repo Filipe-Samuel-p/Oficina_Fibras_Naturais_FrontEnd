@@ -533,7 +533,7 @@ async function handleCadastro(form) {
   const payload = {
     name:     nomeInput.value.trim(),
     email:    emailInput.value.trim(),
-    phone:    telefoneInput.value.replace(/\D/g,''), // Send only numbers
+    phone:    telefoneInput.value, // Send only numbers
     password: senhaInput.value,
   };
 
