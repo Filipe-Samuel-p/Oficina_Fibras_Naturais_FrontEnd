@@ -23,10 +23,14 @@ function getCookie(name) {
 document.addEventListener('DOMContentLoaded', async () => {
   renderizarCarrinho();
   const userAddress = await getAddress();
-  console.log(userAddress)
+  const token = getCookie("token")
 
   window.addEventListener('carrinho:atualizado', renderizarCarrinho);
 
+  if (!token) {
+    document.getElementById('btn-finalizar-pedido')?.addEventListener('click', () => alert("Você precisa fazer login antes de finalizar seu pedido!"));
+    return
+  }
   // WhatsApp
   if (userAddress) {
     document.getElementById('btn-finalizar-pedido')?.addEventListener('click', finalizarPedido);
