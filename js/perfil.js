@@ -179,9 +179,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       number: document.getElementById("end-number").value,
     };
 
-    console.log(addressDTO)
-
-
     try {
       if (userData && userData.address) {
         const res = await fetch(`${BASE_URL}/user/address`, {

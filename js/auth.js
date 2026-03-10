@@ -3,7 +3,7 @@
 // Modal de Login e Cadastro
 // =============================================
 
-const BASE_URL = 'http://localhost:8080/api/v1';
+const BASE_URL = "http://localhost:8080/api/v1";
 
 /**
  * Utilitários de Cookies
@@ -12,25 +12,26 @@ function setCookie(name, value, days = 7) {
   let expires = "";
   if (days) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = "; expires=" + date.toUTCString();
   }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+  document.cookie =
+    name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
 }
 
 function getCookie(name) {
   const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
+  const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
   }
   return null;
 }
 
 function eraseCookie(name) {
-  document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
+  document.cookie = name + "=; Max-Age=-99999999; path=/; SameSite=Lax";
 }
 
 /**
@@ -38,11 +39,16 @@ function eraseCookie(name) {
  */
 function jwtDecode(token) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(""),
+    );
 
     return JSON.parse(jsonPayload);
   } catch (error) {
@@ -51,40 +57,37 @@ function jwtDecode(token) {
   }
 }
 
-
 // Inicialização
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   injetarHTMLModal();
   checkLoginStatus(); // Check login status on page load
   vincularHeaderBtn();
   vincularEventosModal();
 
   // Attach event listener to the logout button
-  const logoutButton = document.querySelector('.sidebar__sair-btn');
+  const logoutButton = document.querySelector(".sidebar__sair-btn");
   if (logoutButton) {
-    logoutButton.addEventListener('click', handleLogout);
+    logoutButton.addEventListener("click", handleLogout);
   }
 });
 
-
 // Verifica status de login ao carregar a página
 function checkLoginStatus() {
-  const userName = getCookie('userName');
-  const token = getCookie('token');
+  const userName = getCookie("userName");
+  const token = getCookie("token");
   if (userName && token) {
     atualizarHeaderUsuario(userName);
     atualizarSidebar(true);
   } else {
-    eraseCookie('userName');
-    eraseCookie('token');
+    eraseCookie("userName");
+    eraseCookie("token");
     atualizarSidebar(false);
   }
 }
 
-
 // Injeta HTML do modal no <body>
 function injetarHTMLModal() {
-  if (document.getElementById('modal-auth')) return;
+  if (document.getElementById("modal-auth")) return;
 
   const html = `
   <div id="modal-auth" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="auth-titulo">
@@ -255,45 +258,46 @@ function injetarHTMLModal() {
     </div>
   </div>`;
 
-  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.insertAdjacentHTML("beforeend", html);
 }
-
 
 // Conecta o botão do header ao modal
 
 function vincularHeaderBtn() {
   const handleHeaderButtonClick = () => {
-    const token = getCookie('token');
-    if (!token) { // Only open modal if not logged in
-      abrirModal('login');
+    const token = getCookie("token");
+    if (!token) {
+      // Only open modal if not logged in
+      abrirModal("login");
     } else {
-        console.log('User is logged in, not opening login modal.');
+      console.log("User is logged in, not opening login modal.");
     }
   };
 
   const handleHeaderButtonKeydown = (e) => {
-    const token = getCookie('token');
-    if (!token && (e.key === 'Enter' || e.key === ' ')) { // Only open modal if not logged in
-      abrirModal('login');
+    const token = getCookie("token");
+    if (!token && (e.key === "Enter" || e.key === " ")) {
+      // Only open modal if not logged in
+      abrirModal("login");
     }
   };
 
   // Espera o DOM — o header pode ser injetado depois
   const tentarVincular = () => {
-    const btnUsuario = document.querySelector('.header__usuario');
+    const btnUsuario = document.querySelector(".header__usuario");
     if (btnUsuario) {
-      btnUsuario.style.cursor = 'pointer'; // Always set cursor to pointer
-      btnUsuario.setAttribute('role', 'button');
-      btnUsuario.setAttribute('tabindex', '0');
-      btnUsuario.setAttribute('aria-label', 'Entrar ou criar conta');
+      btnUsuario.style.cursor = "pointer"; // Always set cursor to pointer
+      btnUsuario.setAttribute("role", "button");
+      btnUsuario.setAttribute("tabindex", "0");
+      btnUsuario.setAttribute("aria-label", "Entrar ou criar conta");
 
       // Remove existing listeners to prevent duplicates if this function is called multiple times
-      btnUsuario.removeEventListener('click', handleHeaderButtonClick);
-      btnUsuario.removeEventListener('keydown', handleHeaderButtonKeydown);
+      btnUsuario.removeEventListener("click", handleHeaderButtonClick);
+      btnUsuario.removeEventListener("keydown", handleHeaderButtonKeydown);
 
       // Add new listeners
-      btnUsuario.addEventListener('click', handleHeaderButtonClick);
-      btnUsuario.addEventListener('keydown', handleHeaderButtonKeydown);
+      btnUsuario.addEventListener("click", handleHeaderButtonClick);
+      btnUsuario.addEventListener("keydown", handleHeaderButtonKeydown);
     }
   };
 
@@ -302,40 +306,41 @@ function vincularHeaderBtn() {
   setTimeout(tentarVincular, 300);
 }
 
-
 // Eventos internos do modal
 function vincularEventosModal() {
-
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#modal-auth-fechar') || e.target.id === 'modal-auth') {
+  document.addEventListener("click", (e) => {
+    if (
+      e.target.closest("#modal-auth-fechar") ||
+      e.target.id === "modal-auth"
+    ) {
       fecharModal();
     }
   });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') fecharModal();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") fecharModal();
   });
 
   // Tabs
-  document.addEventListener('click', (e) => {
-    if (e.target.id === 'tab-login')    mudarTab('login');
-    if (e.target.id === 'tab-cadastro') mudarTab('cadastro');
-    if (e.target.id === 'ir-cadastro')  mudarTab('cadastro');
-    if (e.target.id === 'ir-login')     mudarTab('login');
+  document.addEventListener("click", (e) => {
+    if (e.target.id === "tab-login") mudarTab("login");
+    if (e.target.id === "tab-cadastro") mudarTab("cadastro");
+    if (e.target.id === "ir-cadastro") mudarTab("cadastro");
+    if (e.target.id === "ir-login") mudarTab("login");
   });
 
   // Toggle olho da senha
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.senha-olho');
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".senha-olho");
     if (!btn) return;
     const inputId = btn.dataset.alvo;
-    const input   = document.getElementById(inputId);
+    const input = document.getElementById(inputId);
     if (!input) return;
-    const mostrar = input.type === 'password';
-    input.type = mostrar ? 'text' : 'password';
-    btn.setAttribute('aria-label', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+    const mostrar = input.type === "password";
+    input.type = mostrar ? "text" : "password";
+    btn.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
     // Troca ícone
-    btn.querySelector('svg').innerHTML = mostrar
+    btn.querySelector("svg").innerHTML = mostrar
       ? `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/>
          <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/>
          <line x1="1" y1="1" x2="23" y2="23"/>`
@@ -344,19 +349,19 @@ function vincularEventosModal() {
   });
 
   // Máscara de telefone
-  document.addEventListener('input', (e) => {
-    if (e.target.id === 'cad-telefone') {
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "cad-telefone") {
       e.target.value = mascaraTelefone(e.target.value);
     }
   });
 
   // Submit login
-  document.addEventListener('submit', (e) => {
-    if (e.target.id === 'form-login') {
+  document.addEventListener("submit", (e) => {
+    if (e.target.id === "form-login") {
       e.preventDefault();
       handleLogin(e.target);
     }
-    if (e.target.id === 'form-cadastro') {
+    if (e.target.id === "form-cadastro") {
       e.preventDefault();
       handleCadastro(e.target);
     }
@@ -366,63 +371,65 @@ function vincularEventosModal() {
 // ============================
 // Abrir / fechar modal
 // ============================
-function abrirModal(aba = 'login') {
-  const modal = document.getElementById('modal-auth');
+function abrirModal(aba = "login") {
+  const modal = document.getElementById("modal-auth");
   if (!modal) return;
   mudarTab(aba);
-  modal.classList.add('visivel');
-  document.body.classList.add('sem-scroll');
-  setTimeout(() => document.getElementById('modal-auth-fechar')?.focus(), 50);
+  modal.classList.add("visivel");
+  document.body.classList.add("sem-scroll");
+  setTimeout(() => document.getElementById("modal-auth-fechar")?.focus(), 50);
 }
 
 function fecharModal() {
-  const modal = document.getElementById('modal-auth');
+  const modal = document.getElementById("modal-auth");
   if (!modal) return;
-  modal.classList.remove('visivel');
-  document.body.classList.remove('sem-scroll');
+  modal.classList.remove("visivel");
+  document.body.classList.remove("sem-scroll");
 }
-
 
 // Trocar aba
 function mudarTab(aba) {
-  const tabLogin    = document.getElementById('tab-login');
-  const tabCadastro = document.getElementById('tab-cadastro');
-  const painelLogin    = document.getElementById('painel-login');
-  const painelCadastro = document.getElementById('painel-cadastro');
-  const toast = document.getElementById('auth-toast');
+  const tabLogin = document.getElementById("tab-login");
+  const tabCadastro = document.getElementById("tab-cadastro");
+  const painelLogin = document.getElementById("painel-login");
+  const painelCadastro = document.getElementById("painel-cadastro");
+  const toast = document.getElementById("auth-toast");
   if (!tabLogin) return;
 
   // Esconde toast
-  toast?.classList.remove('visivel');
+  toast?.classList.remove("visivel");
 
-  if (aba === 'login') {
-    tabLogin.classList.add('ativo');    tabLogin.setAttribute('aria-selected', 'true');
-    tabCadastro.classList.remove('ativo'); tabCadastro.setAttribute('aria-selected', 'false');
-    painelLogin.classList.add('ativo');
-    painelCadastro.classList.remove('ativo');
-    document.getElementById('login-email')?.focus();
+  if (aba === "login") {
+    tabLogin.classList.add("ativo");
+    tabLogin.setAttribute("aria-selected", "true");
+    tabCadastro.classList.remove("ativo");
+    tabCadastro.setAttribute("aria-selected", "false");
+    painelLogin.classList.add("ativo");
+    painelCadastro.classList.remove("ativo");
+    document.getElementById("login-email")?.focus();
   } else {
-    tabCadastro.classList.add('ativo');  tabCadastro.setAttribute('aria-selected', 'true');
-    tabLogin.classList.remove('ativo'); tabLogin.setAttribute('aria-selected', 'false');
-    painelCadastro.classList.add('ativo');
-    painelLogin.classList.remove('ativo');
-    document.getElementById('cad-nome')?.focus();
+    tabCadastro.classList.add("ativo");
+    tabCadastro.setAttribute("aria-selected", "true");
+    tabLogin.classList.remove("ativo");
+    tabLogin.setAttribute("aria-selected", "false");
+    painelCadastro.classList.add("ativo");
+    painelLogin.classList.remove("ativo");
+    document.getElementById("cad-nome")?.focus();
   }
 }
-
 
 // Handlers de submit (mock)
 async function handleLogin(form) {
   let valido = true;
 
-  const emailInput = form.querySelector('#login-email');
-  const senhaInput = form.querySelector('#login-senha');
+  const emailInput = form.querySelector("#login-email");
+  const senhaInput = form.querySelector("#login-senha");
 
-  limparErro('login-email-erro');
-  limparErro('login-senha-erro');
+  limparErro("login-email-erro");
+  limparErro("login-senha-erro");
 
   if (!emailInput.value.trim() || !emailValido(emailInput.value)) {
-    setErro('login-email-erro', 'Insira um e-mail válido.');
+    setErro("login-email-erro", "Insira um e-mail válido.");
     valido = false;
   }
   // Removed password length validation for login
@@ -432,9 +439,9 @@ async function handleLogin(form) {
   // }
   if (!valido) return;
 
-  const btn = document.getElementById('btn-login-submit');
+  const btn = document.getElementById("btn-login-submit");
   btn.disabled = true;
-  btn.textContent = 'Entrando...';
+  btn.textContent = "Entrando...";
 
   const payload = {
     email: emailInput.value.trim(),
@@ -443,29 +450,32 @@ async function handleLogin(form) {
 
   try {
     const response = await fetch(`${BASE_URL}/auth/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      let errorMessage = `Erro: ${response.status} ${response.statusText || 'Erro desconhecido'}`;
+      let errorMessage = `Erro: ${response.status} ${response.statusText || "Erro desconhecido"}`;
       try {
         const errorData = await response.json();
         // Use errorData.message if available, otherwise fall back to generic or statusText
         errorMessage = errorData.message || response.statusText || errorMessage;
       } catch (jsonError) {
         // If response is not JSON or is empty, use the generic message
-        console.warn('Could not parse error response as JSON:', jsonError);
+        console.warn("Could not parse error response as JSON:", jsonError);
       }
       throw new Error(errorMessage);
     }
 
     const data = await response.json();
     const decoded = jwtDecode(data.accessToken);
-    const userNameToStore = decoded.username && typeof decoded.username === 'string' ? decoded.username : 'Usuário';
+    const userNameToStore =
+      decoded.username && typeof decoded.username === "string"
+        ? decoded.username
+        : "Usuário";
 
     // Calcula a expiração em dias com base no 'exp' do JWT
     let diasParaExpirar = 7; // fallback
@@ -475,122 +485,141 @@ async function handleLogin(form) {
       diasParaExpirar = segundosRestantes / (60 * 60 * 24);
     }
 
-    setCookie('token', data.accessToken, diasParaExpirar);
-    setCookie('userName', userNameToStore, diasParaExpirar);
+    setCookie("token", data.accessToken, diasParaExpirar);
+    setCookie("userName", userNameToStore, diasParaExpirar);
 
-    mostrarToast('Login realizado com sucesso! ✓');
+    mostrarToast("Login realizado com sucesso! ✓");
     atualizarHeaderUsuario(userNameToStore); // Use the processed name
     atualizarSidebar(true);
-    setTimeout(fecharModal, 1400);
-
+    setTimeout(() => {
+      fecharModal();
+      window.location.reload();
+    }, 1400);
   } catch (error) {
-    console.error('[AUTH] Erro no login:', error);
-    mostrarToast(`Erro: ${error.message || 'Falha ao conectar com o servidor.'}`);
+    console.error("[AUTH] Erro no login:", error);
+    mostrarToast(
+      `Erro: ${error.message || "Falha ao conectar com o servidor."}`,
+    );
     // Optionally, set specific error messages for email/password if the backend provides them
-    if (error.message.includes('Credenciais inválidas')) {
-        setErro('login-email-erro', 'E-mail ou senha inválidos.');
-        setErro('login-senha-erro', 'E-mail ou senha inválidos.');
+    if (error.message.includes("Credenciais inválidas")) {
+      setErro("login-email-erro", "E-mail ou senha inválidos.");
+      setErro("login-senha-erro", "E-mail ou senha inválidos.");
     }
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Entrar';
+    btn.textContent = "Entrar";
   }
 }
 
 async function handleCadastro(form) {
   let valido = true;
 
-  const nomeInput     = form.querySelector('#cad-nome');
-  const emailInput    = form.querySelector('#cad-email');
-  const telefoneInput = form.querySelector('#cad-telefone');
-  const senhaInput    = form.querySelector('#cad-senha');
+  const nomeInput = form.querySelector("#cad-nome");
+  const emailInput = form.querySelector("#cad-email");
+  const telefoneInput = form.querySelector("#cad-telefone");
+  const senhaInput = form.querySelector("#cad-senha");
 
-
-  ['cad-nome-erro','cad-email-erro','cad-telefone-erro','cad-senha-erro'].forEach(limparErro);
+  [
+    "cad-nome-erro",
+    "cad-email-erro",
+    "cad-telefone-erro",
+    "cad-senha-erro",
+  ].forEach(limparErro);
 
   if (!nomeInput.value.trim() || nomeInput.value.trim().length < 3) {
-    setErro('cad-nome-erro', 'Informe seu nome completo.');
+    setErro("cad-nome-erro", "Informe seu nome completo.");
     valido = false;
   }
   if (!emailInput.value.trim() || !emailValido(emailInput.value)) {
-    setErro('cad-email-erro', 'Insira um e-mail válido.');
+    setErro("cad-email-erro", "Insira um e-mail válido.");
     valido = false;
   }
-  if (!telefoneInput.value.trim() || telefoneInput.value.replace(/\D/g,'').length < 10) {
-    setErro('cad-telefone-erro', 'Informe um telefone válido.');
+  if (
+    !telefoneInput.value.trim() ||
+    telefoneInput.value.replace(/\D/g, "").length < 10
+  ) {
+    setErro("cad-telefone-erro", "Informe um telefone válido.");
     valido = false;
   }
   if (senhaInput.value.length < 6) {
-    setErro('cad-senha-erro', 'A senha deve ter ao menos 6 caracteres.');
+    setErro("cad-senha-erro", "A senha deve ter ao menos 6 caracteres.");
     valido = false;
   }
   if (!valido) return;
 
-  const btn = document.getElementById('btn-cad-submit');
+  const btn = document.getElementById("btn-cad-submit");
   btn.disabled = true;
-  btn.textContent = 'Criando conta...';
+  btn.textContent = "Criando conta...";
 
   const payload = {
-    name:     nomeInput.value.trim(),
-    email:    emailInput.value.trim(),
-    phone:    telefoneInput.value, // Send only numbers
+    name: nomeInput.value.trim(),
+    email: emailInput.value.trim(),
+    phone: telefoneInput.value, // Send only numbers
     password: senhaInput.value,
   };
 
   try {
     const response = await fetch(`${BASE_URL}/auth/register`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      let errorMessage = `Erro: ${response.status} ${response.statusText || 'Erro desconhecido'}`;
+      let errorMessage = `Erro: ${response.status} ${response.statusText || "Erro desconhecido"}`;
       try {
         const errorData = await response.json();
         // Use errorData.message if available, otherwise fall back to generic or statusText
         errorMessage = errorData.message || response.statusText || errorMessage;
       } catch (jsonError) {
         // If response is not JSON or is empty, use the generic message
-        console.warn('Could not parse error response as JSON:', jsonError);
+        console.warn("Could not parse error response as JSON:", jsonError);
       }
       throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    const userNameToStore = data.name && typeof data.name === 'string' ? data.name : 'Usuário';
-    const firstNameForToast = userNameToStore.split(' ')[0];
+    const userNameToStore =
+      data.name && typeof data.name === "string" ? data.name : "Usuário";
+    const firstNameForToast = userNameToStore.split(" ")[0];
 
-    mostrarToast(`Conta criada com sucesso! Bem-vindo(a), ${firstNameForToast}! ✓`);
+    mostrarToast(
+      `Conta criada com sucesso! Bem-vindo(a), ${firstNameForToast}! ✓`,
+    );
 
     // Automatically log in after successful registration
     // Prepare a mock form element for handleLogin
     const loginForm = {
-        querySelector: (selector) => {
-            if (selector === '#login-email') return { value: emailInput.value };
-            if (selector === '#login-senha') return { value: senhaInput.value };
-            return null;
-        }
+      querySelector: (selector) => {
+        if (selector === "#login-email") return { value: emailInput.value };
+        if (selector === "#login-senha") return { value: senhaInput.value };
+        return null;
+      },
     };
     await handleLogin(loginForm); // Pass the values to handleLogin
 
     form.reset();
-    setTimeout(fecharModal, 1800);
-
+    setTimeout(() => {
+      fecharModal();
+      window.location.reload();
+    }, 1400);
   } catch (error) {
-    console.error('[AUTH] Erro no cadastro:', error);
-    mostrarToast(`Erro: ${error.message || 'Falha ao conectar com o servidor.'}`);
+    console.error("[AUTH] Erro no cadastro:", error);
+    mostrarToast(
+      `Erro: ${error.message || "Falha ao conectar com o servidor."}`,
+    );
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Criar Conta';
+    btn.textContent = "Criar Conta";
   }
 }
 
-
 // Utilitários
-function emailValido(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function emailValido(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
 
 function setErro(id, msg) {
   const el = document.getElementById(id);
@@ -599,39 +628,46 @@ function setErro(id, msg) {
 
 function limparErro(id) {
   const el = document.getElementById(id);
-  if (el) el.textContent = '';
+  if (el) el.textContent = "";
 }
 
 function mascaraTelefone(v) {
-  v = v.replace(/\D/g, '').slice(0, 11);
-  if (v.length <= 10) return v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
-  return v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim().replace(/-$/, '');
+  v = v.replace(/\D/g, "").slice(0, 11);
+  if (v.length <= 10)
+    return v
+      .replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3")
+      .trim()
+      .replace(/-$/, "");
+  return v
+    .replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3")
+    .trim()
+    .replace(/-$/, "");
 }
 
 function mostrarToast(msg) {
-  const toast = document.getElementById('auth-toast');
-  const txt   = document.getElementById('auth-toast-txt');
+  const toast = document.getElementById("auth-toast");
+  const txt = document.getElementById("auth-toast-txt");
   if (!toast || !txt) return;
   txt.textContent = msg;
-  toast.classList.add('visivel');
+  toast.classList.add("visivel");
 }
 
 function atualizarHeaderUsuario(nome) {
-  document.querySelectorAll('.header__usuario').forEach(el => {
+  document.querySelectorAll(".header__usuario").forEach((el) => {
     if (nome) {
-      const firstName = nome.split(' ')[0]; // Get only the first name
+      const firstName = nome.split(" ")[0]; // Get only the first name
       el.innerHTML = `<span>Olá,</span><span>${firstName}</span>`;
-      el.style.cursor = 'default';
-      el.removeAttribute('aria-label');
-      el.removeAttribute('tabindex');
-      el.removeAttribute('role');
+      el.style.cursor = "default";
+      el.removeAttribute("aria-label");
+      el.removeAttribute("tabindex");
+      el.removeAttribute("role");
     } else {
       // Default state when no user is logged in
       el.innerHTML = `Entrar ou criar conta`;
-      el.style.cursor = 'pointer';
-      el.setAttribute('role', 'button');
-      el.setAttribute('tabindex', '0');
-      el.setAttribute('aria-label', 'Entrar ou criar conta');
+      el.style.cursor = "pointer";
+      el.setAttribute("role", "button");
+      el.setAttribute("tabindex", "0");
+      el.setAttribute("aria-label", "Entrar ou criar conta");
     }
   });
 }
@@ -639,29 +675,28 @@ function atualizarHeaderUsuario(nome) {
 // Expõe para uso externo (ex: botão de outro lugar abrir o modal)
 window.abrirModalAuth = abrirModal;
 
-
 // Logout
 function handleLogout() {
-  eraseCookie('token');
-  eraseCookie('userName');
+  eraseCookie("token");
+  eraseCookie("userName");
   atualizarHeaderUsuario(null); // Update header to logged out state
   atualizarSidebar(false);
   window.location.reload(); // Reload the page to clear all session-dependent data and UI
 }
 
 function atualizarSidebar(logado) {
-  const secaoMinhaConta = document.getElementById('sidebar-minha-conta');
-  const linkPerfil = document.getElementById('sidebar-perfil');
-  const btnSair = document.querySelector('.sidebar__sair');
+  const secaoMinhaConta = document.getElementById("sidebar-minha-conta");
+  const linkPerfil = document.getElementById("sidebar-perfil");
+  const btnSair = document.querySelector(".sidebar__sair");
 
   if (logado) {
-    if (secaoMinhaConta) secaoMinhaConta.style.display = 'block';
-    if (linkPerfil) linkPerfil.style.display = 'flex';
-    if (btnSair) btnSair.style.display = 'block';
+    if (secaoMinhaConta) secaoMinhaConta.style.display = "block";
+    if (linkPerfil) linkPerfil.style.display = "flex";
+    if (btnSair) btnSair.style.display = "block";
   } else {
-    if (secaoMinhaConta) secaoMinhaConta.style.display = 'none';
-    if (linkPerfil) linkPerfil.style.display = 'none';
-    if (btnSair) btnSair.style.display = 'none';
+    if (secaoMinhaConta) secaoMinhaConta.style.display = "none";
+    if (linkPerfil) linkPerfil.style.display = "none";
+    if (btnSair) btnSair.style.display = "none";
   }
 }
 
