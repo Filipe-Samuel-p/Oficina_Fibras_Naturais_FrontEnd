@@ -14,26 +14,203 @@ function getCookie(name) {
 const token = getCookie("token");
 const telefoneLoja = document.getElementById("display-telefone-loja");
 
+// Elementos do Modal Admin
+const modalAddAdmin = document.getElementById("modal-add-admin");
+const btnAddAdmin = document.getElementById("btn-add-admin");
+const btnFecharModalAdmin = document.getElementById("fechar-modal-admin");
+const formAddAdmin = document.getElementById("form-add-admin");
+
+// Elementos do Modal Produto
+const modalAddProduto = document.getElementById("modal-add-produto");
+const btnAddProduto = document.getElementById("btn-add-produto");
+const btnFecharModalProduto = document.getElementById("fechar-modal-produto");
+const formAddProduto = document.getElementById("form-add-produto");
+
+// Elementos do Modal Contato
+const modalEditarContato = document.getElementById("modal-editar-contato");
+const btnEditarContato = document.getElementById("btn-editar-contato");
+const btnFecharModalContato = document.getElementById("fechar-modal-contato");
+const formEditarContato = document.getElementById("form-editar-contato");
+
+let shopInfosCache = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
   // Inicialização básica
+  if (!token) {
+    window.location.href = "../index.html";
+    return;
+  }
   await carregarPedidosAdmin();
-  const shopInfos = await getShopInfos()
-  if (shopInfos) {
-    const phone = shopInfos.whatsappNumber
-    telefoneLoja.textContent = `(${phone.slice(0,2)}) ${phone.slice(2,7)}-${phone.slice(7)}`
+  shopInfosCache = await getShopInfos();
+  if (shopInfosCache) {
+    const phone = shopInfosCache.whatsappNumber;
+    telefoneLoja.textContent = `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`;
   }
 
-  // Listeners para botões de ação (apenas logs por enquanto ou redirecionamentos)
-  document.getElementById("btn-add-produto").addEventListener("click", () => {
-    alert("Funcionalidade: Abrir modal/página de adicionar produto");
+  // --- Lógica do Modal Adicionar Admin ---
+  const abrirModalAdmin = () => {
+    modalAddAdmin.classList.add("visivel");
+    document.body.style.overflow = "hidden";
+  };
+
+  const fecharModalAdmin = () => {
+    modalAddAdmin.classList.remove("visivel");
+    document.body.style.overflow = "";
+    formAddAdmin.reset();
+  };
+
+  btnAddAdmin.addEventListener("click", abrirModalAdmin);
+  btnFecharModalAdmin.addEventListener("click", fecharModalAdmin);
+
+  // --- Lógica do Modal Adicionar Produto ---
+  const abrirModalProduto = () => {
+    modalAddProduto.classList.add("visivel");
+    document.body.style.overflow = "hidden";
+  };
+
+  const fecharModalProduto = () => {
+    modalAddProduto.classList.remove("visivel");
+    document.body.style.overflow = "";
+    formAddProduto.reset();
+  };
+
+  btnAddProduto.addEventListener("click", abrirModalProduto);
+  btnFecharModalProduto.addEventListener("click", fecharModalProduto);
+
+  // --- Lógica do Modal Editar Contato ---
+  const abrirModalContato = () => {
+    if (shopInfosCache) {
+        document.getElementById("loja-whatsapp").value = shopInfosCache.whatsappNumber;
+    }
+    modalEditarContato.classList.add("visivel");
+    document.body.style.overflow = "hidden";
+  };
+
+  const fecharModalContato = () => {
+    modalEditarContato.classList.remove("visivel");
+    document.body.style.overflow = "";
+    formEditarContato.reset();
+  };
+
+  btnEditarContato.addEventListener("click", abrirModalContato);
+  btnFecharModalContato.addEventListener("click", fecharModalContato);
+
+  // Fechar modais ao clicar fora
+  window.addEventListener("click", (e) => {
+    if (e.target === modalAddAdmin) fecharModalAdmin();
+    if (e.target === modalAddProduto) fecharModalProduto();
+    if (e.target === modalEditarContato) fecharModalContato();
   });
 
-  document.getElementById("btn-ver-produtos").addEventListener("click", () => {
-    window.location.href = "/pages/loja.html"; // Ou uma página de listagem admin se existir
+  // Envio do formulário de Contato
+  formEditarContato.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btnSubmit = document.getElementById("btn-submit-contato");
+    const whatsappNumber = document.getElementById("loja-whatsapp").value;
+
+    try {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Salvando...";
+
+      const res = await fetch(`${BASE_URL}/settings`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ whatsappNumber }),
+      });
+
+      if (!res.ok) throw new Error("Erro ao atualizar contato");
+
+      alert("Contato da loja atualizado com sucesso!");
+      fecharModalContato();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao atualizar contato. Tente novamente.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Salvar Alterações";
+    }
   });
 
-  document.getElementById("btn-add-admin").addEventListener("click", () => {
-    alert("Funcionalidade: Abrir modal/página de adicionar administrador");
+  // Envio do formulário de Produto
+  formAddProduto.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btnSubmit = document.getElementById("btn-submit-produto");
+
+    const produtoData = {
+      name: document.getElementById("prod-nome").value,
+      description: document.getElementById("prod-desc").value,
+      pricePerUnit: parseFloat(document.getElementById("prod-preco").value),
+      stockQuantity: parseInt(document.getElementById("prod-estoque").value),
+      imageUrl: document.getElementById("prod-img").value,
+      active: document.getElementById("prod-ativo").checked
+    };
+
+    try {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Cadastrando...";
+
+      const res = await fetch(`${BASE_URL}/product`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(produtoData),
+      });
+
+      if (!res.ok) throw new Error("Erro ao cadastrar produto");
+
+      alert("Produto cadastrado com sucesso!");
+      fecharModalProduto();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao cadastrar produto. Verifique os dados e tente novamente.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Cadastrar Produto";
+    }
+  });
+
+  // Envio do formulário de Admin
+  formAddAdmin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("admin-email").value;
+    const btnSubmit = document.getElementById("btn-submit-admin");
+
+    try {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Processando...";
+
+      const res = await fetch(`${BASE_URL}/settings/invite-admin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) throw new Error("Erro ao promover usuário");
+
+      alert(`Usuário ${email} agora é um administrador!`);
+      fecharModalAdmin();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao promover usuário. Verifique o e-mail ou suas permissões.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Promover a Admin";
+    }
+  });
+
+  // Outros Listeners
+  document.getElementById("btn-ver-produtos-lista").addEventListener("click", () => {
+    window.location.href = "/pages/loja.html";
   });
 
   document.getElementById("btn-listar-admins").addEventListener("click", () => {
@@ -44,17 +221,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 const carregarPedidosAdmin = async () => {
   const container = document.getElementById("lista-pedidos-admin");
   try {
-    // Tentando carregar todos os pedidos (endpoint genérico para admin)
-    // Se falhar, usa o my-orders apenas para demonstração visual
     let pedidos = await getAllOrders();
-    console.log(pedidos.content)
-
-    if (!pedidos || pedidos.length === 0) {
+    if (!pedidos || !pedidos.content || pedidos.content.length === 0) {
       container.innerHTML =
         '<p class="perfil-item-valor">Nenhum pedido encontrado no sistema.</p>';
       return;
     }
-
     renderizarPedidos(pedidos.content, container);
   } catch (err) {
     console.error("Erro ao carregar pedidos admin:", err);
@@ -65,24 +237,18 @@ const carregarPedidosAdmin = async () => {
 
 const getAllOrders = async () => {
   if (!token) return null;
-  // Tenta o endpoint de admin, se falhar cai no catch do carregarPedidosAdmin
   const res = await fetch(`${BASE_URL}/orders`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!res.ok) {
-    return null;
-  }
+  if (!res.ok) return null;
   return await res.json();
 };
 
 const renderizarPedidos = (pedidos, container) => {
-  // Pega apenas os 8 mais recentes para o admin
-
   const ultimosPedidos = pedidos.slice(0, 5);
-
   const statusMap = {
     PENDING: { texto: "Pendente", classe: "status--pendente" },
     COMPLETED: { texto: "Concluído", classe: "status--concluido" },
@@ -105,7 +271,6 @@ const renderizarPedidos = (pedidos, container) => {
         currency: "BRL",
       }).format(pedido.totalAmount || pedido.total);
 
-      // No admin, seria interessante mostrar quem fez o pedido se disponível
       const clienteNome = pedido.clientName || "Cliente";
 
       return `
@@ -134,9 +299,7 @@ const getShopInfos = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (!res.ok) {
-      return null;
-    }
+    if (!res.ok) return null;
     return await res.json();
   } catch (error) {
     console.error(error);

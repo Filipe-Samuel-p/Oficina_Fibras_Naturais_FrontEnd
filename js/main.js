@@ -5,15 +5,58 @@
 
 import { Cart } from './cart.js';
 
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   iniciarSidebar();
   atualizarBadge();
   iniciarCarrinhoBtns();
+  verificarRoleAdmin();
 
   // Escuta atualizações do carrinho em qualquer aba
   window.addEventListener('carrinho:atualizado', atualizarBadge);
   window.addEventListener('storage', atualizarBadge); // cross-tab
 });
+
+function verificarRoleAdmin() {
+  const token = getCookie("token");
+  if (!token) return;
+
+  const decoded = parseJwt(token);
+  if (!decoded || !decoded.roles) return;
+
+  const userRoles = decoded.roles;
+  const isAdmin = userRoles.includes("ROLE_ADMIN");
+  const isCoordinator = userRoles.includes("ROLE_COORDINATOR");
+
+  if (isAdmin || isCoordinator) {
+      const adminArea = document.getElementById("sidebar-admin-area");
+      if (adminArea) adminArea.style.display = "block";
+  }
+}
 
 // ============================
 // SIDEBAR
