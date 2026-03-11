@@ -421,7 +421,9 @@
   border: 1px solid var(--cinza-borda);
   border-radius: var(--raio-md);
   overflow: hidden;
-  transition: box-shadow var(--t-normal), transform var(--t-normal);
+  transition:
+    box-shadow var(--t-normal),
+    transform var(--t-normal);
   flex-shrink: 0;
   position: relative;
   cursor: pointer;
@@ -665,6 +667,22 @@
   background: var(--verde-hover);
 }
 
+.btn-sucesso {
+  background: #28a745;
+  color: var(--branco);
+}
+.btn-sucesso:hover {
+  background: #218838;
+}
+
+.btn-perigo {
+  background: #dc3545;
+  color: var(--branco);
+}
+.btn-perigo:hover {
+  background: #c82333;
+}
+
 .btn-secundario {
   background: var(--cinza-leve);
   color: var(--texto-escuro);
@@ -841,7 +859,9 @@
 .faq-resposta {
   max-height: 0;
   overflow: hidden;
-  transition: max-height var(--t-lenta), padding var(--t-normal);
+  transition:
+    max-height var(--t-lenta),
+    padding var(--t-normal);
 }
 .faq-resposta p {
   padding-bottom: var(--gap-md);
@@ -1037,7 +1057,7 @@
 }
 
 @media (min-width: 768px) {
-  .embed-map-responsive{
+  .embed-map-responsive {
     padding-bottom: 30%;
   }
 }
@@ -1124,6 +1144,10 @@
   padding-bottom: var(--gap-sm);
 }
 
+#titulo-loja-perfil {
+  margin-bottom: 0px;
+}
+
 .perfil-form .form-grupo {
   margin-bottom: var(--gap-md);
 }
@@ -1157,6 +1181,30 @@
   text-transform: uppercase;
 }
 
-.status--concluido { background: #d4edda; color: #155724; }
-.status--pendente { background: #fff3cd; color: #856404; }
-.status--cancelado { background: #f8d7da; color: #721c24; }
+.status--concluido {
+  background: #d4edda;
+  color: #155724;
+}
+.status--pendente {
+  background: #fff3cd;
+  color: #856404;
+}
+.status--cancelado {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-sucesso.disabled:hover {
+  background: #28a745;
+  opacity: 0.6;
+}
+
+.btn-perigo.disabled:hover {
+  background: #dc3545;
+  opacity: 0.6;
+}
