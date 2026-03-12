@@ -176,7 +176,6 @@ export function criarCardProduto(produto) {
   card.className = 'produto-card';
   card.setAttribute('aria-label', produto.nome);
   card.style.cursor = 'pointer';
-
   const temDesconto = produto.desconto && produto.precoAntigo;
   const semEstoque  = produto.stockQuantity === 0 || !produto.active;
 
@@ -194,7 +193,7 @@ export function criarCardProduto(produto) {
     <div class="produto-card__corpo">
       <p class="produto-card__nome">${produto.nome}</p>
       <div class="produto-card__precos">
-        <span class="produto-card__preco-atual">R$ ${produto.pricePerUnit.toFixed(2).replace('.', ',')}</span>
+        <span class="produto-card__preco-atual">R$ ${produto.preco.toFixed(2).replace('.', ',')}</span>
         ${temDesconto
           ? `<span class="produto-card__preco-antigo">R$ ${produto.precoAntigo.toFixed(2).replace('.', ',')}</span>
              <span class="produto-card__preco-off">${produto.desconto}% off</span>`

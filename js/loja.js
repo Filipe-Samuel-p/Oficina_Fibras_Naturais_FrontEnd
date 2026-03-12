@@ -1,68 +1,113 @@
-// =============================================
-// OFICINA DE FIBRAS NATURAIS — loja.js
-// Grid de produtos com paginação
-// =============================================
+const BASE_URL = "http://localhost:8080/api/v1";
 
-import { PRODUTOS, criarCardProduto } from './products.js';
+import { criarCardProduto } from "./products.js";
 
 const POR_PAGINA = 8;
 let paginaAtual = 1;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicia a primeira renderização
   renderizarPagina(paginaAtual);
 });
 
-function renderizarPagina(pagina) {
-  const grid      = document.getElementById('loja-grid');
-  const paginacao = document.getElementById('paginacao');
-  const btnPrev   = document.getElementById('pag-prev');
-  const btnNext   = document.getElementById('pag-next');
+async function renderizarPagina(pagina) {
+  const grid = document.getElementById("loja-grid");
+  const paginacao = document.getElementById("paginacao");
+  const btnPrev = document.getElementById("pag-prev");
+  const btnNext = document.getElementById("pag-next");
+
   if (!grid) return;
 
-  // Calcula slice
-  const inicio = (pagina - 1) * POR_PAGINA;
-  const fim    = inicio + POR_PAGINA;
-  const pagProdutos = PRODUTOS.slice(inicio, fim);
-  const totalPags   = Math.ceil(PRODUTOS.length / POR_PAGINA);
+  // 1. Busca os produtos reais da API (Página da API é 0-based)
+  const data = await getAllProducts(pagina - 1, POR_PAGINA);
 
-  // Limpa e preenche o grid
-  grid.innerHTML = '';
-  pagProdutos.forEach(p => {
-    const card = criarCardProduto(p, { mostrarCartLink: 'carrinho.html' });
+  if (!data || !data.content) {
+    grid.innerHTML =
+      '<p class="error">Não foi possível carregar os produtos.</p>';
+    return;
+  }
+
+  const produtosReais = data.content;
+  console.log(produtosReais)
+  const totalPags = data.totalPages;
+
+  // 2. Limpa e preenche o grid com os dados da API
+  grid.innerHTML = "";
+  produtosReais.forEach((p) => {
+    // Mapeamos os campos da API para o formato esperado pelo criarCardProduto
+    // API: name, pricePerUnit, imageUrl -> Componente: nome, preco, imagem
+    const produtoFormatado = {
+      id: p.id,
+      nome: p.name,
+      preco: p.pricePerUnit,
+      imagem: p.imageUrl,
+      descricao: p.description,
+      estoque: p.stockQuantity,
+      active: p.active,
+      imageUrl: p.imageUrl,
+      emoji: '🛒',
+    };
+
+    const card = criarCardProduto(produtoFormatado, {
+      mostrarCartLink: "carrinho.html",
+    });
     grid.appendChild(card);
   });
 
-  // Paginação
-  if (paginacao && totalPags > 1) {
-    // Remove botões de número antigos
-    paginacao.querySelectorAll('.paginacao__num').forEach(b => b.remove());
+  // 3. Lógica de Paginação Dinâmica
+  if (paginacao) {
+    // Limpa botões numéricos antigos
+    paginacao.querySelectorAll(".paginacao__num").forEach((b) => b.remove());
 
-    // Insere botões de número antes do botão "next"
+    // Gera os botões de página baseados no totalPages da API
     for (let i = 1; i <= totalPags; i++) {
-      const btn = document.createElement('button');
-      btn.className = `paginacao__btn paginacao__num${i === pagina ? ' ativo' : ''}`;
+      const btn = document.createElement("button");
+      btn.className = `paginacao__btn paginacao__num${i === pagina ? " ativo" : ""}`;
       btn.textContent = i;
-      btn.setAttribute('aria-label', `Página ${i}`);
-      if (i === pagina) btn.setAttribute('aria-current', 'page');
-      btn.addEventListener('click', () => {
+      btn.setAttribute("aria-label", `Página ${i}`);
+      if (i === pagina) btn.setAttribute("aria-current", "page");
+
+      btn.addEventListener("click", async () => {
         paginaAtual = i;
-        renderizarPagina(i);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        await renderizarPagina(i);
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
       paginacao.insertBefore(btn, btnNext);
     }
 
+    // Configura botões Anterior/Próximo
     if (btnPrev) {
       btnPrev.disabled = pagina === 1;
-      btnPrev.onclick = () => {
-        if (paginaAtual > 1) { paginaAtual--; renderizarPagina(paginaAtual); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      btnPrev.onclick = async () => {
+        if (paginaAtual > 1) {
+          paginaAtual--;
+          await renderizarPagina(paginaAtual);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
       };
     }
     if (btnNext) {
       btnNext.disabled = pagina === totalPags;
-      btnNext.onclick = () => {
-        if (paginaAtual < totalPags) { paginaAtual++; renderizarPagina(paginaAtual); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      btnNext.onclick = async () => {
+        if (paginaAtual < totalPags) {
+          paginaAtual++;
+          await renderizarPagina(paginaAtual);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
       };
     }
   }
 }
+
+const getAllProducts = async (page = 0, size = 8) => {
+  try {
+    const res = await fetch(`${BASE_URL}/product?page=${page}&size=${size}`);
+    if (!res.ok) throw new Error("Erro ao carregar produtos");
+
+    const data = await res.json();
+    return data; // Retorna o objeto completo com content, totalPages, etc.
+  } catch (error) {
+    console.error("Erro na busca de produtos:", error);
+    return null;
+  }
+};
