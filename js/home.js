@@ -1,18 +1,12 @@
-// =============================================
-// OFICINA DE FIBRAS NATURAIS — home.js
-// Carrosséis da homepage
-// =============================================
+const BASE_URL = "http://localhost:8080/api/v1";
 
-import { PRODUTOS, criarCardProduto } from './products.js';
+import { criarCardProduto } from './products.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Destaque: primeiros 6 produtos
-  const destaque = PRODUTOS.filter((_, i) => i < 6);
-  // Recentes: restantes
-  const recentes = PRODUTOS.filter((_, i) => i >= 6);
+  const produtos = await getAllProducts()
 
-  iniciarCarrossel('trilho-destaque', destaque, 'carrossel-destaque');
-  iniciarCarrossel('trilho-recentes', recentes, 'carrossel-recentes');
+  iniciarCarrossel('trilho-produtos', produtos.content, 'carrossel-produtos');
 });
 
 /**
@@ -28,7 +22,18 @@ function iniciarCarrossel(trilhoId, produtos, carrosselId) {
 
   // Renderiza os cards
   produtos.forEach(p => {
-    const card = criarCardProduto(p);
+      const produtoFormatado = {
+      id: p.id,
+      nome: p.name,
+      preco: p.pricePerUnit,
+      imagem: p.imageUrl,
+      descricao: p.description,
+      estoque: p.stockQuantity,
+      active: p.active,
+      imageUrl: p.imageUrl,
+      emoji: '🛒',
+    };
+    const card = criarCardProduto(produtoFormatado);
     card.style.width = 'var(--card-w, 200px)';
     trilho.appendChild(card);
   });
@@ -84,3 +89,16 @@ function debounce(fn, ms) {
   let t;
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 }
+
+const getAllProducts = async (page = 0, size = 8) => {
+  try {
+    const res = await fetch(`${BASE_URL}/product?page=${page}&size=${size}`);
+    if (!res.ok) throw new Error("Erro ao carregar produtos");
+
+    const data = await res.json();
+    return data; // Retorna o objeto completo com content, totalPages, etc.
+  } catch (error) {
+    console.error("Erro na busca de produtos:", error);
+    return null;
+  }
+};

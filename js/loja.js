@@ -28,7 +28,6 @@ async function renderizarPagina(pagina) {
   }
 
   const produtosReais = data.content;
-  console.log(produtosReais)
   const totalPags = data.totalPages;
 
   // 2. Limpa e preenche o grid com os dados da API
