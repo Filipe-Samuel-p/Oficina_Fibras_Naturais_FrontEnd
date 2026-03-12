@@ -32,10 +32,16 @@ const btnEditarContato = document.getElementById("btn-editar-contato");
 const btnFecharModalContato = document.getElementById("fechar-modal-contato");
 const formEditarContato = document.getElementById("form-editar-contato");
 
+// Elementos do Modal Listar Admins
+const modalListarAdmins = document.getElementById("modal-listar-admins");
+const btnListarAdmins = document.getElementById("btn-listar-admins");
+const btnFecharModalListaAdmins = document.getElementById("fechar-modal-lista-admins");
+const containerListaAdmins = document.getElementById("container-lista-admins");
+
 let shopInfosCache = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Inicialização básica
+  // ... (código anterior mantido)
   if (!token) {
     window.location.href = "../index.html";
     return;
@@ -95,12 +101,64 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnEditarContato.addEventListener("click", abrirModalContato);
   btnFecharModalContato.addEventListener("click", fecharModalContato);
 
+  // --- Lógica do Modal Listar Admins ---
+  const renderizarListaAdmins = (admins) => {
+    if (!admins || admins.length === 0) {
+      containerListaAdmins.innerHTML = '<p class="perfil-item-valor">Nenhum administrador encontrado.</p>';
+      return;
+    }
+
+    containerListaAdmins.innerHTML = admins.map(admin => `
+      <div class="perfil-item-lista" style="padding: 12px 0;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="perfil-avatar" style="width: 40px; height: 40px; font-size: 16px;">
+            ${admin.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <span class="perfil-item-titulo" style="font-size: 14px;">${admin.name}</span>
+            <span class="perfil-item-valor" style="font-size: 12px;">${admin.email}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  };
+
+  const abrirModalListaAdmins = async () => {
+    modalListarAdmins.classList.add("visivel");
+    document.body.style.overflow = "hidden";
+    containerListaAdmins.innerHTML = '<p class="perfil-item-valor">Carregando...</p>';
+
+    const admins = await getAllAdmins();
+    renderizarListaAdmins(admins);
+  };
+
+  const fecharModalListaAdmins = () => {
+    modalListarAdmins.classList.remove("visivel");
+    document.body.style.overflow = "";
+  };
+
+  btnListarAdmins.addEventListener("click", abrirModalListaAdmins);
+  btnFecharModalListaAdmins.addEventListener("click", fecharModalListaAdmins);
+
+  // Máscara de telefone para o cadastro de admin
+  document.getElementById("admin-telefone").addEventListener("input", (e) => {
+    let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+    if (v.length <= 10) {
+      e.target.value = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3").trim().replace(/-$/, "");
+    } else {
+      e.target.value = v.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3").trim().replace(/-$/, "");
+    }
+  });
+
   // Fechar modais ao clicar fora
   window.addEventListener("click", (e) => {
     if (e.target === modalAddAdmin) fecharModalAdmin();
     if (e.target === modalAddProduto) fecharModalProduto();
     if (e.target === modalEditarContato) fecharModalContato();
+    if (e.target === modalListarAdmins) fecharModalListaAdmins();
   });
+
+  // ... (resto dos listeners de submit mantidos)
 
   // Envio do formulário de Contato
   formEditarContato.addEventListener("submit", async (e) => {
@@ -179,42 +237,46 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Envio do formulário de Admin
   formAddAdmin.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("admin-email").value;
+
+    const payload = {
+      name: document.getElementById("admin-nome").value.trim(),
+      email: document.getElementById("admin-email").value.trim(),
+      phoneAdmin: document.getElementById("admin-telefone").value.trim(),
+      password: document.getElementById("admin-senha").value
+    };
+
     const btnSubmit = document.getElementById("btn-submit-admin");
 
     try {
       btnSubmit.disabled = true;
-      btnSubmit.textContent = "Processando...";
+      btnSubmit.textContent = "Criando conta...";
 
+      // Enviando para o endpoint de convite/criação de admin
       const res = await fetch(`${BASE_URL}/settings/invite-admin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Erro ao promover usuário");
+      if (!res.ok) throw new Error("Erro ao criar administrador");
 
-      alert(`Usuário ${email} agora é um administrador!`);
+      alert(`Administrador ${payload.name} criado com sucesso!`);
       fecharModalAdmin();
     } catch (err) {
       console.error(err);
-      alert("Erro ao promover usuário. Verifique o e-mail ou suas permissões.");
+      alert("Erro ao criar administrador. Verifique os dados ou suas permissões.");
     } finally {
       btnSubmit.disabled = false;
-      btnSubmit.textContent = "Promover a Admin";
+      btnSubmit.textContent = "Criar Administrador";
     }
   });
 
   // Outros Listeners
   document.getElementById("btn-ver-produtos-lista").addEventListener("click", () => {
     window.location.href = "/pages/loja.html";
-  });
-
-  document.getElementById("btn-listar-admins").addEventListener("click", () => {
-    alert("Funcionalidade: Listar administradores do sistema");
   });
 });
 
@@ -305,3 +367,21 @@ const getShopInfos = async () => {
     console.error(error);
   }
 };
+
+const getAllAdmins = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/settings/admins`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
+    )
+
+    if (!res.ok) throw new Error("Erro ao carregar administradores!")
+    return await res.json();
+  } catch (error) {
+
+  }
+}
