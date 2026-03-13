@@ -1,8 +1,3 @@
-// =============================================
-// OFICINA DE FIBRAS NATURAIS — produto-modal.js
-// Modal de detalhes do produto
-// =============================================
-
 import { Cart, formatarBRL } from './cart.js';
 
 // ============================
@@ -14,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Escuta o evento disparado pelo clique no card
   window.addEventListener('produto:abrir', (e) => {
+    console.log(e.detail)
     abrirModal(e.detail);
   });
 });
@@ -126,8 +122,6 @@ function abrirModal(produto) {
   const pmNome       = document.getElementById('produto-modal-nome');
   const pmDesc       = document.getElementById('pm-desc');
   const pmPreco      = document.getElementById('pm-preco');
-  const pmPrecoAnt   = document.getElementById('pm-preco-antigo');
-  const pmBadgeOff   = document.getElementById('pm-badge-off');
   const pmBadgeIn    = document.getElementById('pm-badge-inativo');
   const pmEmoji      = document.getElementById('pm-emoji');
   const pmImg        = document.getElementById('pm-img');
@@ -142,11 +136,11 @@ function abrirModal(produto) {
 
   // Nome e descrição
   pmNome.textContent = produto.nome;
-  pmDesc.textContent = produto.description;
+  pmDesc.textContent = produto.descricao;
 
   // Imagem
   if (produto.imageUrl) {
-    pmImg.src = produto.imageUrl;
+    pmImg.src = produto.imagem;
     pmImg.alt = produto.nome;
     pmImg.style.display = 'block';
     pmEmoji.style.display = 'none';
@@ -157,16 +151,7 @@ function abrirModal(produto) {
   }
 
   // Preço
-  pmPreco.textContent = formatarBRL(produto.pricePerUnit);
-  if (produto.precoAntigo) {
-    pmPrecoAnt.textContent = formatarBRL(produto.precoAntigo);
-    pmPrecoAnt.style.display = 'inline';
-    pmBadgeOff.textContent  = `${produto.desconto}% OFF`;
-    pmBadgeOff.style.display = 'inline';
-  } else {
-    pmPrecoAnt.style.display = 'none';
-    pmBadgeOff.style.display = 'none';
-  }
+  pmPreco.textContent = formatarBRL(produto.preco);
 
   // Status active
   const isAtivo = produto.active;
@@ -176,17 +161,17 @@ function abrirModal(produto) {
 
   // Estoque
   const estoqueMax = 30; // referência para a barra
-  const pct = Math.min((produto.stockQuantity / estoqueMax) * 100, 100);
-  pmEstNum.textContent = produto.stockQuantity > 0
-    ? `${produto.stockQuantity} unidades`
+  const pct = Math.min((produto.estoque / estoqueMax) * 100, 100);
+  pmEstNum.textContent = produto.estoque > 0
+    ? `${produto.estoque} unidades`
     : 'Esgotado';
   pmEstFill.style.width = `${pct}%`;
-  pmEstFill.style.background = produto.stockQuantity > 5
+  pmEstFill.style.background = produto.estoque > 5
     ? 'var(--verde-botao)'
-    : produto.stockQuantity > 0 ? 'var(--amarelo-badge)' : '#C0392B';
+    : produto.estoque > 0 ? 'var(--amarelo-badge)' : '#C0392B';
 
   // Botão e quantidade
-  const semEstoque = produto.stockQuantity === 0 || !produto.active;
+  const semEstoque = produto.estoque === 0 || !produto.active;
   pmBtnAdd.disabled = semEstoque;
   pmBtnAdd.textContent = semEstoque ? 'Indisponível' : 'Adicionar ao Carrinho';
   if (!semEstoque) {
@@ -198,7 +183,7 @@ function abrirModal(produto) {
       Adicionar ao Carrinho`;
   }
   pmQtd.value = 1;
-  pmQtd.max   = produto.stockQuantity;
+  pmQtd.max   = produto.estoque;
 
   // Controles de quantidade
   const menos = document.getElementById('pm-qtd-menos');

@@ -488,7 +488,7 @@ async function handleLogin(form) {
     setCookie("token", data.accessToken, diasParaExpirar);
     setCookie("userName", userNameToStore, diasParaExpirar);
 
-    mostrarToast("Login realizado com sucesso! ✓");
+    mostrarToast("Login realizado com sucesso!");
     atualizarHeaderUsuario(userNameToStore); // Use the processed name
     atualizarSidebar(true);
     setTimeout(() => {
@@ -586,7 +586,7 @@ async function handleCadastro(form) {
     const firstNameForToast = userNameToStore.split(" ")[0];
 
     mostrarToast(
-      `Conta criada com sucesso! Bem-vindo(a), ${firstNameForToast}! ✓`,
+      `Conta criada com sucesso! Bem-vindo(a), ${firstNameForToast}!`,
     );
 
     // Automatically log in after successful registration
