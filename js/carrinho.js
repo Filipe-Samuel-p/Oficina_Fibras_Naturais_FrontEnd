@@ -168,6 +168,7 @@ async function finalizarPedido() {
 
     const data = await res.json();
     Cart.limpar();
+    alert("Pedido realizado com sucesso! 🎉 \nIremos te redirecionar para o nosso WhasApp para finalizar detalhes de pagamento.");
     window.open(data.whatsappLink, "_blank");
   } catch (error) {
     console.error(error);
