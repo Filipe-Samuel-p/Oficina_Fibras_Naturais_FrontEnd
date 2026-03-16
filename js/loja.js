@@ -5,10 +5,126 @@ import { criarCardProduto } from "./products.js";
 const POR_PAGINA = 8;
 let paginaAtual = 1;
 
+/**
+ * Utilitários de Auth (Replicados de auth.js/admin.js)
+ */
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+function jwtDecode(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(""),
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    return null;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicia a primeira renderização
+  // 1. Verifica permissões de administrador/coordenador
+  const token = getCookie("token");
+  if (token) {
+    const decoded = jwtDecode(token);
+    if (decoded && decoded.roles && (decoded.roles.includes("ROLE_ADMIN") || decoded.roles.includes("ROLE_COORDINATOR"))) {
+      const adminActions = document.getElementById("admin-actions");
+      if (adminActions) adminActions.style.display = "flex";
+      configurarModalProduto();
+    }
+  }
+
+  // 2. Inicia a primeira renderização dos produtos
   renderizarPagina(paginaAtual);
 });
+
+/**
+ * Lógica do Modal de Adicionar Produto
+ */
+function configurarModalProduto() {
+  const modalAddProduto = document.getElementById("modal-add-produto");
+  const btnAddProduto = document.getElementById("btn-add-produto");
+  const btnFecharModalProduto = document.getElementById("fechar-modal-produto");
+  const formAddProduto = document.getElementById("form-add-produto");
+
+  if (!modalAddProduto || !btnAddProduto || !formAddProduto) return;
+
+  const abrirModalProduto = () => {
+    modalAddProduto.classList.add("visivel");
+    document.body.style.overflow = "hidden";
+  };
+
+  const fecharModalProduto = () => {
+    modalAddProduto.classList.remove("visivel");
+    document.body.style.overflow = "";
+    formAddProduto.reset();
+  };
+
+  btnAddProduto.addEventListener("click", abrirModalProduto);
+  if (btnFecharModalProduto) btnFecharModalProduto.addEventListener("click", fecharModalProduto);
+
+  // Fechar ao clicar fora
+  window.addEventListener("click", (e) => {
+    if (e.target === modalAddProduto) fecharModalProduto();
+  });
+
+  // Envio do formulário
+  formAddProduto.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btnSubmit = document.getElementById("btn-submit-produto");
+    const token = getCookie("token");
+
+    const produtoData = {
+      name: document.getElementById("prod-nome").value,
+      description: document.getElementById("prod-desc").value,
+      pricePerUnit: parseFloat(document.getElementById("prod-preco").value),
+      stockQuantity: parseInt(document.getElementById("prod-estoque").value),
+      imageUrl: document.getElementById("prod-img").value,
+      active: document.getElementById("prod-ativo").checked
+    };
+
+    try {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Cadastrando...";
+
+      const res = await fetch(`${BASE_URL}/product`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(produtoData),
+      });
+
+      if (!res.ok) throw new Error("Erro ao cadastrar produto");
+
+      alert("Produto cadastrado com sucesso!");
+      fecharModalProduto();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao cadastrar produto. Verifique os dados e tente novamente.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Cadastrar Produto";
+    }
+  });
+}
 
 async function renderizarPagina(pagina) {
   const grid = document.getElementById("loja-grid");

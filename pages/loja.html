@@ -95,6 +95,13 @@
 <main>
   <section class="loja-secao">
     <div class="container">
+      <!-- Botão de Administração (visível apenas para admin/coordenador) -->
+      <div id="admin-actions" style="display: none; margin-bottom: var(--gap-md); justify-content: flex-end;">
+        <button type="button" class="btn btn-primario" id="btn-add-produto">
+          + Adicionar Produto
+        </button>
+      </div>
+
       <div class="loja-grid" id="loja-grid">
         <!-- Produtos gerados via JS -->
       </div>
@@ -123,6 +130,62 @@
   </nav>
   <p class="footer__copy">©2025 por Oficina de fibras naturais.</p>
 </footer>
+
+<!-- MODAL ADICIONAR PRODUTO -->
+<div class="modal-backdrop" id="modal-add-produto">
+  <div class="modal" style="max-width: 550px;">
+    <button class="modal__fechar" id="fechar-modal-produto" aria-label="Fechar">✕</button>
+    <div class="auth-modal__corpo">
+      <h2 class="auth-painel__titulo">Adicionar Novo Produto</h2>
+      <p class="auth-painel__sub">Preencha os dados abaixo para cadastrar um novo item na loja.</p>
+
+      <form class="auth-form" id="form-add-produto">
+        <div class="form-grupo">
+          <label class="form-label" for="prod-nome">Nome do Produto</label>
+          <div class="form-input-wrap">
+            <input class="form-input" type="text" id="prod-nome" name="name" placeholder="Ex: Cesto de Vime Grande" required />
+          </div>
+        </div>
+
+        <div class="form-grupo">
+          <label class="form-label" for="prod-desc">Descrição</label>
+          <textarea class="form-textarea" id="prod-desc" name="description" placeholder="Detalhes sobre o material, tamanho..." required></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-grupo">
+            <label class="form-label" for="prod-preco">Preço Unitário (R$)</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="number" step="0.01" id="prod-preco" name="pricePerUnit" placeholder="0,00" required />
+            </div>
+          </div>
+          <div class="form-grupo">
+            <label class="form-label" for="prod-estoque">Quantidade em Estoque</label>
+            <div class="form-input-wrap">
+              <input class="form-input" type="number" id="prod-estoque" name="stockQuantity" placeholder="0" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grupo">
+          <label class="form-label" for="prod-img">URL da Imagem</label>
+          <div class="form-input-wrap">
+            <input class="form-input" type="url" id="prod-img" name="imageUrl" placeholder="https://link-da-imagem.com/foto.jpg" required />
+          </div>
+        </div>
+
+        <div class="form-grupo" style="flex-direction: row; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="checkbox" id="prod-ativo" name="active" checked style="width: 18px; height: 18px; cursor: pointer;" />
+          <label class="form-label" for="prod-ativo" style="margin-bottom: 0; cursor: pointer;">Produto Ativo (Visível na loja)</label>
+        </div>
+
+        <button type="submit" class="auth-btn-submit" id="btn-submit-produto">
+          Cadastrar Produto
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Scripts -->
 <script type="module" src="../js/main.js"></script>
