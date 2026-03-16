@@ -77,11 +77,12 @@ function checkLoginStatus() {
   const token = getCookie("token");
   if (userName && token) {
     atualizarHeaderUsuario(userName);
+    atualizarSidebar(true);
   } else {
     eraseCookie("userName");
     eraseCookie("token");
+    atualizarSidebar(false)
   }
-  atualizarSidebar(false);
 }
 
 // Injeta HTML do modal no <body>
@@ -699,7 +700,7 @@ function atualizarSidebar(logado) {
     if (btnSair) btnSair.style.display = "none";
     if (btnLogar) {
       btnLogar.style.display = "block";
-      btnLogar.addEventListener("click", abrirModal);
+      btnLogar.addEventListener("click", () => abrirModal("login"));
     }
   }
 }
