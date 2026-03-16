@@ -656,7 +656,7 @@ function atualizarHeaderUsuario(nome) {
   document.querySelectorAll(".header__usuario").forEach((el) => {
     if (nome) {
       const firstName = nome.split(" ")[0]; // Get only the first name
-      el.innerHTML = `<span>Olá,</span><span>${firstName}</span>`;
+      el.innerHTML = `<a href="/pages/perfil.html"><span>Olá, ${firstName}</span></a>`;
       el.style.cursor = "default";
       el.removeAttribute("aria-label");
       el.removeAttribute("tabindex");
