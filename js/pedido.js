@@ -38,10 +38,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const token = getCookie("token");
   const decoded = jwtDecode(token)
   const isClient = decoded.roles === "ROLE_CLIENT";
+  console.log(decoded)
 
-
-  if (!token || isClient) {
-    window.location.href = "../index.html";
+  if (!token) {
     return;
   }
 

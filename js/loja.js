@@ -4,6 +4,7 @@ import { criarCardProduto } from "./products.js";
 
 const POR_PAGINA = 8;
 let paginaAtual = 1;
+let isAdmin = false;
 
 /**
  * Utilitários de Auth (Replicados de auth.js/admin.js)
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (token) {
     const decoded = jwtDecode(token);
     if (decoded && decoded.roles && (decoded.roles.includes("ROLE_ADMIN") || decoded.roles.includes("ROLE_COORDINATOR"))) {
+      isAdmin = true;
       const adminActions = document.getElementById("admin-actions");
       if (adminActions) adminActions.style.display = "flex";
       configurarModalProduto();
@@ -54,17 +56,41 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * Lógica do Modal de Adicionar Produto
+ * Lógica do Modal de Adicionar/Editar Produto
  */
 function configurarModalProduto() {
   const modalAddProduto = document.getElementById("modal-add-produto");
   const btnAddProduto = document.getElementById("btn-add-produto");
   const btnFecharModalProduto = document.getElementById("fechar-modal-produto");
   const formAddProduto = document.getElementById("form-add-produto");
+  const modalTitulo = modalAddProduto?.querySelector(".auth-painel__titulo");
+  const btnSubmit = document.getElementById("btn-submit-produto");
 
-  if (!modalAddProduto || !btnAddProduto || !formAddProduto) return;
+  let produtoIdEditando = null;
 
-  const abrirModalProduto = () => {
+  if (!modalAddProduto || !formAddProduto) return;
+
+  const abrirModalProduto = (produto = null) => {
+    if (produto) {
+      // Modo Edição
+      produtoIdEditando = produto.id;
+      if (modalTitulo) modalTitulo.textContent = "Editar Produto";
+      if (btnSubmit) btnSubmit.textContent = "Salvar Alterações";
+
+      document.getElementById("prod-nome").value = produto.nome;
+      document.getElementById("prod-desc").value = produto.descricao;
+      document.getElementById("prod-preco").value = produto.preco;
+      document.getElementById("prod-estoque").value = produto.estoque;
+      document.getElementById("prod-img").value = produto.imageUrl;
+      document.getElementById("prod-ativo").checked = produto.active;
+    } else {
+      // Modo Adição
+      produtoIdEditando = null;
+      if (modalTitulo) modalTitulo.textContent = "Adicionar Novo Produto";
+      if (btnSubmit) btnSubmit.textContent = "Cadastrar Produto";
+      formAddProduto.reset();
+    }
+
     modalAddProduto.classList.add("visivel");
     document.body.style.overflow = "hidden";
   };
@@ -73,10 +99,16 @@ function configurarModalProduto() {
     modalAddProduto.classList.remove("visivel");
     document.body.style.overflow = "";
     formAddProduto.reset();
+    produtoIdEditando = null;
   };
 
-  btnAddProduto.addEventListener("click", abrirModalProduto);
+  if (btnAddProduto) btnAddProduto.addEventListener("click", () => abrirModalProduto());
   if (btnFecharModalProduto) btnFecharModalProduto.addEventListener("click", fecharModalProduto);
+
+  // Escuta o evento de editar disparado pelo card
+  window.addEventListener('produto:editar', (e) => {
+    abrirModalProduto(e.detail);
+  });
 
   // Fechar ao clicar fora
   window.addEventListener("click", (e) => {
@@ -86,7 +118,6 @@ function configurarModalProduto() {
   // Envio do formulário
   formAddProduto.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const btnSubmit = document.getElementById("btn-submit-produto");
     const token = getCookie("token");
 
     const produtoData = {
@@ -100,10 +131,14 @@ function configurarModalProduto() {
 
     try {
       btnSubmit.disabled = true;
-      btnSubmit.textContent = "Cadastrando...";
+      const originalText = btnSubmit.textContent;
+      btnSubmit.textContent = produtoIdEditando ? "Salvando..." : "Cadastrando...";
 
-      const res = await fetch(`${BASE_URL}/product`, {
-        method: "POST",
+      const url = produtoIdEditando ? `${BASE_URL}/product/${produtoIdEditando}` : `${BASE_URL}/product`;
+      const method = produtoIdEditando ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -111,17 +146,16 @@ function configurarModalProduto() {
         body: JSON.stringify(produtoData),
       });
 
-      if (!res.ok) throw new Error("Erro ao cadastrar produto");
+      if (!res.ok) throw new Error(`Erro ao ${produtoIdEditando ? "editar" : "cadastrar"} produto`);
 
-      alert("Produto cadastrado com sucesso!");
+      alert(`Produto ${produtoIdEditando ? "atualizado" : "cadastrado"} com sucesso!`);
       fecharModalProduto();
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert("Erro ao cadastrar produto. Verifique os dados e tente novamente.");
+      alert(`Erro ao processar produto. Tente novamente.`);
     } finally {
       btnSubmit.disabled = false;
-      btnSubmit.textContent = "Cadastrar Produto";
     }
   });
 }
@@ -165,6 +199,7 @@ async function renderizarPagina(pagina) {
 
     const card = criarCardProduto(produtoFormatado, {
       mostrarCartLink: "carrinho.html",
+      isAdmin: isAdmin
     });
     grid.appendChild(card);
   });
