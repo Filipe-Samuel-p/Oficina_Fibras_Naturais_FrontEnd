@@ -41,6 +41,7 @@ const btnAddAdmin = document.getElementById("btn-add-admin");
 const btnFecharModalAdmin = document.getElementById("fechar-modal-admin");
 const formAddAdmin = document.getElementById("form-add-admin");
 
+
 // Elementos do Modal Produto
 const modalAddProduto = document.getElementById("modal-add-produto");
 const btnAddProduto = document.getElementById("btn-add-produto");
@@ -130,7 +131,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const decoded = jwtDecode(token);
-    console.log(decoded)
     const isCoordinator = decoded && decoded.roles && decoded.roles.includes("ROLE_COORDINATOR");
 
     containerListaAdmins.innerHTML = admins.map(admin => `
@@ -145,53 +145,98 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
         </div>
         ${isCoordinator ? `
-          <button
-            class="btn-deletar-admin"
-            data-id="${admin.id}"
-            data-nome="${admin.name}"
-            style="background: #C0392B; border: none; border-radius: 4px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
-            onmouseover="this.style.background='#A93226'"
-            onmouseout="this.style.background='#C0392B'"
-            title="Remover Administrador"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M3 6h18" />
-              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-            </svg>
-          </button>
+          <div style="display: flex; gap: 8px;">
+            <button
+              class="btn-promover-admin"
+              data-id="${admin.id}"
+              data-nome="${admin.name}"
+              style="background: #27AE60; border: none; border-radius: 4px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+              onmouseover="this.style.background='#219150'"
+              onmouseout="this.style.background='#27AE60'"
+              title="Promover para Coordenador"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+            </button>
+            <button
+              class="btn-deletar-admin"
+              data-id="${admin.id}"
+              data-nome="${admin.name}"
+              style="background: #C0392B; border: none; border-radius: 4px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+              onmouseover="this.style.background='#A93226'"
+              onmouseout="this.style.background='#C0392B'"
+              title="Remover Administrador"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M3 6h18" />
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+              </svg>
+            </button>
+          </div>
         ` : ''}
       </div>
     `).join('');
   };
 
-  // Event delegation para deletar admin
+  // Event delegation para botões da lista de admin
   containerListaAdmins.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".btn-deletar-admin");
-    if (!btn) return;
+    // Lógica para Deletar
+    const btnDeletar = e.target.closest(".btn-deletar-admin");
+    if (btnDeletar) {
+      const adminId = btnDeletar.dataset.id;
+      const adminNome = btnDeletar.dataset.nome;
 
-    const adminId = btn.dataset.id;
-    const adminNome = btn.dataset.nome;
+      if (confirm(`Tem certeza que deseja remover o administrador "${adminNome}"?`)) {
+        try {
+          const res = await fetch(`${BASE_URL}/coordinator/admins/${adminId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            }
+          });
 
-    if (confirm(`Tem certeza que deseja remover o administrador "${adminNome}"?`)) {
-      try {
-        const res = await fetch(`${BASE_URL}/coordinator/admins/${adminId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          }
-        });
+          if (!res.ok) throw new Error("Erro ao remover administrador");
 
-        if (!res.ok) throw new Error("Erro ao remover administrador");
-
-        alert("Administrador removido com sucesso!");
-        // Recarrega a lista
-        const admins = await getAllAdmins();
-        renderizarListaAdmins(admins);
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao remover administrador. Verifique suas permissões.");
+          alert("Administrador removido com sucesso!");
+          const admins = await getAllAdmins();
+          renderizarListaAdmins(admins);
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao remover administrador. Verifique suas permissões.");
+        }
       }
+      return;
+    }
+
+    // Lógica para Promover
+    const btnPromover = e.target.closest(".btn-promover-admin");
+    if (btnPromover) {
+      const adminId = btnPromover.dataset.id;
+      const adminNome = btnPromover.dataset.nome;
+
+      if (confirm(`Deseja promover o administrador "${adminNome}" para Coordenador?`)) {
+        try {
+          const res = await fetch(`${BASE_URL}/coordinator/admins/${adminId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            }
+          });
+
+          if (!res.ok) throw new Error("Erro ao promover administrador");
+
+          alert("Administrador promovido com sucesso!");
+          const admins = await getAllAdmins();
+          renderizarListaAdmins(admins);
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao promover administrador. Verifique suas permissões.");
+        }
+      }
+      return;
     }
   });
 
