@@ -14,6 +14,27 @@ function getCookie(name) {
 const token = getCookie("token");
 const telefoneLoja = document.getElementById("display-telefone-loja");
 
+/**
+ * Decodifica o payload de um JWT.
+ */
+function jwtDecode(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(""),
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    return null;
+  }
+}
+
 // Elementos do Modal Admin
 const modalAddAdmin = document.getElementById("modal-add-admin");
 const btnAddAdmin = document.getElementById("btn-add-admin");
@@ -108,8 +129,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    const decoded = jwtDecode(token);
+    console.log(decoded)
+    const isCoordinator = decoded && decoded.roles && decoded.roles.includes("ROLE_COORDINATOR");
+
     containerListaAdmins.innerHTML = admins.map(admin => `
-      <div class="perfil-item-lista" style="padding: 12px 0;">
+      <div class="perfil-item-lista" style="padding: 12px 0; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <div class="perfil-avatar" style="width: 40px; height: 40px; font-size: 16px;">
             ${admin.name.charAt(0).toUpperCase()}
@@ -119,9 +144,56 @@ document.addEventListener("DOMContentLoaded", async () => {
             <span class="perfil-item-valor" style="font-size: 12px;">${admin.email}</span>
           </div>
         </div>
+        ${isCoordinator ? `
+          <button
+            class="btn-deletar-admin"
+            data-id="${admin.id}"
+            data-nome="${admin.name}"
+            style="background: #C0392B; border: none; border-radius: 4px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+            onmouseover="this.style.background='#A93226'"
+            onmouseout="this.style.background='#C0392B'"
+            title="Remover Administrador"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M3 6h18" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+          </button>
+        ` : ''}
       </div>
     `).join('');
   };
+
+  // Event delegation para deletar admin
+  containerListaAdmins.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-deletar-admin");
+    if (!btn) return;
+
+    const adminId = btn.dataset.id;
+    const adminNome = btn.dataset.nome;
+
+    if (confirm(`Tem certeza que deseja remover o administrador "${adminNome}"?`)) {
+      try {
+        const res = await fetch(`${BASE_URL}/coordinator/admins/${adminId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+
+        if (!res.ok) throw new Error("Erro ao remover administrador");
+
+        alert("Administrador removido com sucesso!");
+        // Recarrega a lista
+        const admins = await getAllAdmins();
+        renderizarListaAdmins(admins);
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao remover administrador. Verifique suas permissões.");
+      }
+    }
+  });
 
   const abrirModalListaAdmins = async () => {
     modalListarAdmins.classList.add("visivel");
