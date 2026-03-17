@@ -458,9 +458,10 @@ async function handleLogin(form) {
     });
 
     if (!response.ok) {
-      let errorMessage = `Erro: ${response.status} ${response.statusText || "Erro desconhecido"}`;
+      let errorMessage = `Email ou senha inválidos.`;
       try {
         const errorData = await response.json();
+        console.log(errorData)
         // Use errorData.message if available, otherwise fall back to generic or statusText
         errorMessage = errorData.message || response.statusText || errorMessage;
       } catch (jsonError) {
@@ -568,7 +569,7 @@ async function handleCadastro(form) {
     });
 
     if (!response.ok) {
-      let errorMessage = `Erro: ${response.status} ${response.statusText || "Erro desconhecido"}`;
+      let errorMessage = `Email ou senha inválidos.`;
       try {
         const errorData = await response.json();
         // Use errorData.message if available, otherwise fall back to generic or statusText
