@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   console.log(decoded)
 
   if (!token) {
+    window.location.href = "../index.html";
     return;
   }
 

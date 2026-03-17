@@ -274,8 +274,8 @@ const renderizarPedidos = (pedidos, container) => {
           <div class="perfil-item-lista">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
               <div>
-                <span class="perfil-item-titulo">Pedido #${pedido.id.toString().slice(-6).toUpperCase()}</span>
-                <span class="perfil-item-valor">Realizado em: ${dataFormatada}</span>
+                <a class="perfil-item-titulo" href=/pages/pedido.html?id=${pedido.id}>Pedido #${pedido.id}</a>
+                <span class="perfil-item-valor">Data: ${dataFormatada}</span>
               </div>
               <span class="status-badge ${infoStatus.classe}">${infoStatus.texto}</span>
             </div>
@@ -344,7 +344,6 @@ const getUserOrders = async () => {
   });
   if (!res.ok) return null;
   data = await res.json();
-  console.log(data);
   return data;
 };
 

@@ -52,6 +52,19 @@ export function criarCardProduto(produto, options = {}) {
           </svg>
           Editar Produto
         </button>
+        <button
+          class="btn btn-deletar-produto"
+          data-id="${produto.id}"
+          style="margin-top: 8px; width: 100%; padding: 8px; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background-color: #C0392B; color: white; border: none; border-radius: var(--raio-sm); cursor: pointer; transition: background-color 0.2s;"
+          onmouseover="this.style.backgroundColor='#A93226'"
+          onmouseout="this.style.backgroundColor='#C0392B'"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18" />
+            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+          </svg>
+          Deletar Produto
+        </button>
       ` : ''}
     </div>
   `;
@@ -61,6 +74,10 @@ export function criarCardProduto(produto, options = {}) {
     if (e.target.closest('.produto-card__btn')) return;
     if (e.target.closest('.btn-editar-produto')) {
         window.dispatchEvent(new CustomEvent('produto:editar', { detail: produto }));
+        return;
+    }
+    if (e.target.closest('.btn-deletar-produto')) {
+        window.dispatchEvent(new CustomEvent('produto:deletar', { detail: produto }));
         return;
     }
     window.dispatchEvent(new CustomEvent('produto:abrir', { detail: produto }));

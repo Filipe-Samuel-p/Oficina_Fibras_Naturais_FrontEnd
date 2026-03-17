@@ -110,6 +110,31 @@ function configurarModalProduto() {
     abrirModalProduto(e.detail);
   });
 
+  // Escuta o evento de deletar disparado pelo card
+  window.addEventListener('produto:deletar', async (e) => {
+    const produto = e.detail;
+    if (confirm(`Tem certeza que deseja deletar o produto "${produto.nome}"? Esta ação não pode ser desfeita.`)) {
+      const token = getCookie("token");
+      try {
+        const res = await fetch(`${BASE_URL}/product/${produto.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Erro ao deletar produto");
+
+        alert("Produto deletado com sucesso!");
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao deletar produto. Tente novamente.");
+      }
+    }
+  });
+
   // Fechar ao clicar fora
   window.addEventListener("click", (e) => {
     if (e.target === modalAddProduto) fecharModalProduto();
