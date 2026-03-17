@@ -36,16 +36,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const orderId = params.get("id");
   const token = getCookie("token");
-  const decoded = jwtDecode(token)
-  const isClient = decoded.roles === "ROLE_CLIENT";
-  console.log(decoded)
 
   if (!token) {
     window.location.href = "../index.html";
     return;
   }
 
+  const decoded = jwtDecode(token)
+  const isClient = decoded.roles.includes("ROLE_CLIENT");
+
   const orderInfoDiv = document.getElementById("order-info");
+  const orderActionsDiv = document.querySelector(".order-actions")
   const btnCancelar = document.getElementById("btn-cancelar");
   const btnConfirmar = document.getElementById("btn-confirmar");
 
@@ -55,9 +56,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  try {
-    console.log(`Buscando informações do pedido: ${orderId}...`);
+  if (isClient) {
+    orderActionsDiv.style.display = "none";
+    btnCancelar.style.display = "none";
+    btnConfirmar.style.display = "none";
+  }
 
+  try {
     const response = await fetch(`${BASE_URL}/orders/${orderId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -67,6 +72,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw new Error("Erro ao buscar pedido");
 
     const orderData = await response.json();
+     if (isClient && orderData.userID !== decoded.sub) {
+       window.location.href = "../index.html";
+       return;
+     }
     const infoStatus = statusMap[orderData.status] || {
       texto: orderData.status,
       classe: "status--pendente",
