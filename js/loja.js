@@ -72,7 +72,7 @@ function configurarModalProduto() {
   const btnSubmit = document.getElementById("btn-submit-produto");
 
   let produtoIdEditando = null;
-  let produtoEditandoImageUrl = '';
+  let produtoEditandoImageUrl = null;
 
   if (!modalAddProduto || !formAddProduto) return;
 
@@ -84,6 +84,7 @@ function configurarModalProduto() {
       if (modalTitulo) modalTitulo.textContent = "Editar Produto";
       if (btnSubmit) btnSubmit.textContent = "Salvar Alterações";
 
+      document.getElementById("prod-img").removeAttribute("required")
       document.getElementById("prod-nome").value = produto.nome;
       document.getElementById("prod-desc").value = produto.descricao;
       document.getElementById("prod-preco").value = produto.preco;
@@ -154,31 +155,31 @@ function configurarModalProduto() {
 
   const uploadImage = async (token, form) => {
     const imageData = new FormData();
+    btnSubmit.disabled = true;
+    const originalText = btnSubmit.textContent;
+    btnSubmit.textContent = produtoIdEditando
+      ? "Salvando..."
+      : "Cadastrando...";
 
-    if (form.get("image") && form.get("image").size > 0) {
-      imageData.append("file", form.get("image"));
-      btnSubmit.disabled = true;
-      const originalText = btnSubmit.textContent;
-      btnSubmit.textContent = produtoIdEditando
-        ? "Salvando..."
-        : "Cadastrando...";
+    if (!form.get("image") || form.get("image").size === 0) {
+      return null;
+    }
+    imageData.append("file", form.get("image"));
+    try {
+      const res = await fetch(`${BASE_URL}/upload/image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: imageData,
+      });
 
-      try {
-        const res = await fetch(`${BASE_URL}/upload/image`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: imageData,
-        });
+      if (!res.ok) throw new Error("Erro ao enviar imagem!");
 
-        if (!res.ok) throw new Error("Erro ao enviar imagem!");
-
-        const data = await res.json();
-        return data.imageUrl;
-      } catch (error) {
-        console.error(error);
-      }
+      const data = await res.json();
+      return data.imageUrl;
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -194,9 +195,11 @@ function configurarModalProduto() {
       description: document.getElementById("prod-desc").value,
       pricePerUnit: parseFloat(document.getElementById("prod-preco").value),
       stockQuantity: parseInt(document.getElementById("prod-estoque").value),
-      imageUrl: imageUrl || produtoEditandoImageUrl,
+      imageUrl: imageUrl? imageUrl : produtoEditandoImageUrl,
       active: document.getElementById("prod-ativo").checked,
     };
+
+    console.log(produtoData)
 
     try {
       const url = produtoIdEditando
