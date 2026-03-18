@@ -43,7 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const token = getCookie("token");
   if (token) {
     const decoded = jwtDecode(token);
-    if (decoded && decoded.roles && (decoded.roles.includes("ROLE_ADMIN") || decoded.roles.includes("ROLE_COORDINATOR"))) {
+    if (
+      decoded &&
+      decoded.roles &&
+      (decoded.roles.includes("ROLE_ADMIN") ||
+        decoded.roles.includes("ROLE_COORDINATOR"))
+    ) {
       isAdmin = true;
       const adminActions = document.getElementById("admin-actions");
       if (adminActions) adminActions.style.display = "flex";
@@ -67,6 +72,7 @@ function configurarModalProduto() {
   const btnSubmit = document.getElementById("btn-submit-produto");
 
   let produtoIdEditando = null;
+  let produtoEditandoImageUrl = '';
 
   if (!modalAddProduto || !formAddProduto) return;
 
@@ -74,6 +80,7 @@ function configurarModalProduto() {
     if (produto) {
       // Modo Edição
       produtoIdEditando = produto.id;
+      produtoEditandoImageUrl = produto.imageUrl;
       if (modalTitulo) modalTitulo.textContent = "Editar Produto";
       if (btnSubmit) btnSubmit.textContent = "Salvar Alterações";
 
@@ -81,7 +88,6 @@ function configurarModalProduto() {
       document.getElementById("prod-desc").value = produto.descricao;
       document.getElementById("prod-preco").value = produto.preco;
       document.getElementById("prod-estoque").value = produto.estoque;
-      document.getElementById("prod-img").value = produto.imageUrl;
       document.getElementById("prod-ativo").checked = produto.active;
     } else {
       // Modo Adição
@@ -102,18 +108,24 @@ function configurarModalProduto() {
     produtoIdEditando = null;
   };
 
-  if (btnAddProduto) btnAddProduto.addEventListener("click", () => abrirModalProduto());
-  if (btnFecharModalProduto) btnFecharModalProduto.addEventListener("click", fecharModalProduto);
+  if (btnAddProduto)
+    btnAddProduto.addEventListener("click", () => abrirModalProduto());
+  if (btnFecharModalProduto)
+    btnFecharModalProduto.addEventListener("click", fecharModalProduto);
 
   // Escuta o evento de editar disparado pelo card
-  window.addEventListener('produto:editar', (e) => {
+  window.addEventListener("produto:editar", (e) => {
     abrirModalProduto(e.detail);
   });
 
   // Escuta o evento de deletar disparado pelo card
-  window.addEventListener('produto:deletar', async (e) => {
+  window.addEventListener("produto:deletar", async (e) => {
     const produto = e.detail;
-    if (confirm(`Tem certeza que deseja deletar o produto "${produto.nome}"? Esta ação não pode ser desfeita.`)) {
+    if (
+      confirm(
+        `Tem certeza que deseja deletar o produto "${produto.nome}"? Esta ação não pode ser desfeita.`,
+      )
+    ) {
       const token = getCookie("token");
       try {
         const res = await fetch(`${BASE_URL}/product/${produto.id}`, {
@@ -140,26 +152,56 @@ function configurarModalProduto() {
     if (e.target === modalAddProduto) fecharModalProduto();
   });
 
+  const uploadImage = async (token, form) => {
+    const imageData = new FormData();
+
+    if (form.get("image") && form.get("image").size > 0) {
+      imageData.append("file", form.get("image"));
+      btnSubmit.disabled = true;
+      const originalText = btnSubmit.textContent;
+      btnSubmit.textContent = produtoIdEditando
+        ? "Salvando..."
+        : "Cadastrando...";
+
+      try {
+        const res = await fetch(`${BASE_URL}/upload/image`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: imageData,
+        });
+
+        if (!res.ok) throw new Error("Erro ao enviar imagem!");
+
+        const data = await res.json();
+        return data.imageUrl;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   // Envio do formulário
   formAddProduto.addEventListener("submit", async (e) => {
     e.preventDefault();
     const token = getCookie("token");
+    const formData = new FormData(e.target);
+    const imageUrl = await uploadImage(token, formData);
 
     const produtoData = {
       name: document.getElementById("prod-nome").value,
       description: document.getElementById("prod-desc").value,
       pricePerUnit: parseFloat(document.getElementById("prod-preco").value),
       stockQuantity: parseInt(document.getElementById("prod-estoque").value),
-      imageUrl: document.getElementById("prod-img").value,
-      active: document.getElementById("prod-ativo").checked
+      imageUrl: imageUrl || produtoEditandoImageUrl,
+      active: document.getElementById("prod-ativo").checked,
     };
 
     try {
-      btnSubmit.disabled = true;
-      const originalText = btnSubmit.textContent;
-      btnSubmit.textContent = produtoIdEditando ? "Salvando..." : "Cadastrando...";
-
-      const url = produtoIdEditando ? `${BASE_URL}/product/${produtoIdEditando}` : `${BASE_URL}/product`;
+      const url = produtoIdEditando
+        ? `${BASE_URL}/product/${produtoIdEditando}`
+        : `${BASE_URL}/product`;
       const method = produtoIdEditando ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -171,9 +213,14 @@ function configurarModalProduto() {
         body: JSON.stringify(produtoData),
       });
 
-      if (!res.ok) throw new Error(`Erro ao ${produtoIdEditando ? "editar" : "cadastrar"} produto`);
+      if (!res.ok)
+        throw new Error(
+          `Erro ao ${produtoIdEditando ? "editar" : "cadastrar"} produto`,
+        );
 
-      alert(`Produto ${produtoIdEditando ? "atualizado" : "cadastrado"} com sucesso!`);
+      alert(
+        `Produto ${produtoIdEditando ? "atualizado" : "cadastrado"} com sucesso!`,
+      );
       fecharModalProduto();
       window.location.reload();
     } catch (err) {
@@ -219,12 +266,12 @@ async function renderizarPagina(pagina) {
       estoque: p.stockQuantity,
       active: p.active,
       imageUrl: p.imageUrl,
-      emoji: '🛒',
+      emoji: "🛒",
     };
 
     const card = criarCardProduto(produtoFormatado, {
       mostrarCartLink: "carrinho.html",
-      isAdmin: isAdmin
+      isAdmin: isAdmin,
     });
     grid.appendChild(card);
   });
