@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   iniciarCarrossel('trilho-produtos', produtos.content, 'carrossel-produtos');
 });
 
+const contactForm = document.getElementById('suporte-form');
+
+
 /**
  * Monta o carrossel e seus controles
  * @param {string} trilhoId - ID do elemento trilho
@@ -102,3 +105,18 @@ const getAllProducts = async (page = 0, size = 8) => {
     return null;
   }
 };
+
+if (contactForm) {
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const nome = formData.get('nome');
+    const mensagem = formData.get('mensagem');
+
+    const telefone = "5522998581484";
+    const texto = encodeURIComponent(`Olá! Meu nome é ${nome}.\n\nMensagem: ${mensagem}`);
+    const url = `https://wa.me/${telefone}?text=${texto}`;
+
+    window.open(url, '_blank');
+  });
+}
