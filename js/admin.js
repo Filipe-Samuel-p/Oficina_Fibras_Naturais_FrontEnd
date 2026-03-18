@@ -41,13 +41,6 @@ const btnAddAdmin = document.getElementById("btn-add-admin");
 const btnFecharModalAdmin = document.getElementById("fechar-modal-admin");
 const formAddAdmin = document.getElementById("form-add-admin");
 
-
-// Elementos do Modal Produto
-const modalAddProduto = document.getElementById("modal-add-produto");
-const btnAddProduto = document.getElementById("btn-add-produto");
-const btnFecharModalProduto = document.getElementById("fechar-modal-produto");
-const formAddProduto = document.getElementById("form-add-produto");
-
 // Elementos do Modal Contato
 const modalEditarContato = document.getElementById("modal-editar-contato");
 const btnEditarContato = document.getElementById("btn-editar-contato");
@@ -89,21 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   btnAddAdmin.addEventListener("click", abrirModalAdmin);
   btnFecharModalAdmin.addEventListener("click", fecharModalAdmin);
-
-  // --- Lógica do Modal Adicionar Produto ---
-  const abrirModalProduto = () => {
-    modalAddProduto.classList.add("visivel");
-    document.body.style.overflow = "hidden";
-  };
-
-  const fecharModalProduto = () => {
-    modalAddProduto.classList.remove("visivel");
-    document.body.style.overflow = "";
-    formAddProduto.reset();
-  };
-
-  btnAddProduto.addEventListener("click", abrirModalProduto);
-  btnFecharModalProduto.addEventListener("click", fecharModalProduto);
 
   // --- Lógica do Modal Editar Contato ---
   const abrirModalContato = () => {
@@ -270,7 +248,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Fechar modais ao clicar fora
   window.addEventListener("click", (e) => {
     if (e.target === modalAddAdmin) fecharModalAdmin();
-    if (e.target === modalAddProduto) fecharModalProduto();
     if (e.target === modalEditarContato) fecharModalContato();
     if (e.target === modalListarAdmins) fecharModalListaAdmins();
   });
@@ -307,47 +284,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } finally {
       btnSubmit.disabled = false;
       btnSubmit.textContent = "Salvar Alterações";
-    }
-  });
-
-  // Envio do formulário de Produto
-  formAddProduto.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btnSubmit = document.getElementById("btn-submit-produto");
-
-    const produtoData = {
-      name: document.getElementById("prod-nome").value,
-      description: document.getElementById("prod-desc").value,
-      pricePerUnit: parseFloat(document.getElementById("prod-preco").value),
-      stockQuantity: parseInt(document.getElementById("prod-estoque").value),
-      imageUrl: document.getElementById("prod-img").value,
-      active: document.getElementById("prod-ativo").checked
-    };
-
-    try {
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = "Cadastrando...";
-
-      const res = await fetch(`${BASE_URL}/product`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(produtoData),
-      });
-
-      if (!res.ok) throw new Error("Erro ao cadastrar produto");
-
-      alert("Produto cadastrado com sucesso!");
-      fecharModalProduto();
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao cadastrar produto. Verifique os dados e tente novamente.");
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Cadastrar Produto";
     }
   });
 
