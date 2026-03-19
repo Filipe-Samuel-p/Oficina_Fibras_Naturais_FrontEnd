@@ -733,6 +733,32 @@
   color: var(--verde-botao);
 }
 
+.btn-outline-secundario {
+  background: transparent;
+  color: var(--marrom-escuro);
+  border: 1px solid var(--marrom-escuro);
+  width: 100%;
+  padding: 10px;
+}
+
+.btn-outline-secundario:hover {
+  border-color: var(--marrom-claro);
+  color: var(--marrom-claro);
+}
+
+.btn-hero {
+  background: transparent;
+  color: var(--verde-claro);
+  border: 1px solid var(--verde-claro);
+  width: 100%;
+  padding: 10px;
+}
+
+.btn-hero:hover {
+  border-color: var(--amarelo-badge);
+  color: var(--amarelo-badge);
+}
+
 /* ============================
    FOOTER
    ============================ */
