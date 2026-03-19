@@ -37,22 +37,25 @@ function iniciarCarrossel(trilhoId, produtos, carrosselId) {
       emoji: '🛒',
     };
     const card = criarCardProduto(produtoFormatado);
-    card.style.width = 'var(--card-w, 200px)';
+    card.style.width = 240;
     trilho.appendChild(card);
   });
+
+  // Descobre o gap real do CSS ou assume 16
+  const getGap = () => parseInt(getComputedStyle(trilho).gap) || 16;
 
   // Descobre a largura dos cards
   const getCardW = () => {
     const card = trilho.querySelector('.produto-card');
-    if (!card) return 200;
-    return card.offsetWidth + parseInt(getComputedStyle(trilho).gap || '16');
+    if (!card) return 240;
+    return card.offsetWidth + getGap();
   };
 
   // Quantos cards cabem visíveis
   const getVisiveis = () => {
     const wrap = trilho.parentElement;
     const cardW = getCardW();
-    return Math.max(1, Math.floor(wrap.offsetWidth / cardW));
+    return Math.max(1, Math.round(wrap.offsetWidth / cardW));
   };
 
   let posicao = 0;
@@ -78,8 +81,8 @@ function iniciarCarrossel(trilhoId, produtos, carrosselId) {
   function configurarLargura() {
     const wrap = trilho.parentElement;
     const visiveis = getVisiveis();
-    const gap = 16;
-    const w = Math.floor((wrap.offsetWidth - gap * (visiveis - 1)) / visiveis);
+    const gap = getGap();
+    const w = Math.round((wrap.offsetWidth - gap * (visiveis - 1)) / visiveis);
     trilho.querySelectorAll('.produto-card').forEach(c => c.style.width = `${w}px`);
     mover(0); // recalcula offset
   }
