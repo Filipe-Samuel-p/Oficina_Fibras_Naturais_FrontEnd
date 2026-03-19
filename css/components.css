@@ -163,20 +163,53 @@
    HERO BANNER
    ============================ */
 .hero-banner {
-  background: var(--verde-banner);
-  padding: var(--gap-3xl) var(--gap-lg);
+  background-image: url('../public/hero_fibras.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 140px;
+  gap: 80px;
+  width: 100%;
+  min-height: 100vh;
   position: relative;
   overflow: hidden;
 }
 
+.hero-banner::before{
+  content: ""; /* Required for pseudo-elements to render */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  background-size: cover; /* Ensures the image covers the container */
+  opacity: 0.4; /* Adjust the opacity value (0.0 to 1.0) */
+  z-index: 1; /
+}
+
 .hero-banner__texto {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--gap-md);
+  z-index: 10;
+}
+
+.hero-banner__actions {
+  width: 50%;
   display: flex;
   align-items: center;
-  gap: var(--gap-md);
+  justify-content: center;
+  gap: 24px;
+  z-index: 10;
 }
 
 .hero-banner__label {
@@ -201,27 +234,13 @@
   line-height: 1;
 }
 
-/* Indicadores do banner */
-.hero-banner__dots {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  margin-top: var(--gap-md);
+.hero-banner__descricao {
+  font-family: var(--fonte-titulo);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--branco);
+  letter-spacing: 0.04em;
 }
-.hero-banner__dot {
-  width: 10px;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.45);
-  cursor: pointer;
-  transition: all var(--t-rapida);
-  border: none;
-}
-.hero-banner__dot.ativo {
-  width: 22px;
-  background: var(--branco);
-}
-
 /* ============================
    SIDEBAR
    ============================ */

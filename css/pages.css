@@ -2,7 +2,7 @@
    HOME
    ============================================= */
 .home-secao {
-  padding: var(--gap-3xl) 0;
+  padding: var(--gap-xl) 0;
 }
 .home-secao + .home-secao {
   padding-top: 0;
@@ -190,4 +190,12 @@
 .home-mapa .secao-titulo {
   text-align: center;
   margin-bottom: var(--gap-xl);
+}
+
+#produtos{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 24px;
 }
